@@ -31,7 +31,11 @@
             </div>	
             <div class="form-group">
                 <label>Validity Status</label>
-                <input type="text" class="form-control" name="isValid" required value="<%= updatingData.isValid %>">
+                <select class="form-control" name="isValid" required>
+                    <option value="true" <% if (updatingData.isValid === true) { %>selected<% } %>>True</option>
+                    <option value="false" <% if (updatingData.isValid === false) { %>selected<% } %>>False</option>
+                </select>
+                
             </div>		
         </div>
         <div class="modal-footer">

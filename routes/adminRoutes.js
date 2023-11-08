@@ -5,6 +5,7 @@ const adminController=require('../controllers/adminController')
 const categoryController=require('../controllers/categoryController')
 const upload=require('../config/multer')
 const subcategoryController=require('../controllers/subcategoryController')
+const productController=require('../controllers/productController')
 
 Router.get('/',adminController.getLogin)
 Router.get('/',adminController.getLogin)
@@ -33,5 +34,19 @@ Router.get('/deleteSubCategory/:id',subcategoryController.getdeleteSubCategory)
 Router.get('/searchSubCategory',subcategoryController.getSearchSubCategory)
 Router.get('/deleteImgSubCategory/:id/:imageUrl',subcategoryController.deleteSubCategoryImage)
 
+
+//products
+Router.get('/products',productController.getProducts)
+//Router.post('/products',upload.array('images',5),adminController.postProduct)
+Router.get('/editProducts/:id',productController.getEditProducts)
+Router.post('/editProduct/:id',upload.array('images',5),productController.postEditProducts)
+Router.get('/deleteProduct/:id',productController.getdeleteProducts)
+Router.get('/searchProducts',productController.getSearchProduct)
+Router.get('/deletePdtImage/:id/:imageUrl',productController.deleteProductImage)
+Router.get('/Product/add',productController.getProductPage)
+Router.post('/Product/add',upload.array('images',5),productController.postProductAdd)
+Router.post('/Product/add/variant',productController.addVariant)
+
+Router.get('/add-product/:id',productController.addProductCheck)
 
 module.exports=Router

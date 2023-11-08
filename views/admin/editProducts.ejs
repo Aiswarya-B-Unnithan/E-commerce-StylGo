@@ -1,0 +1,95 @@
+<section>
+    <form action="/admin/editProduct/<%= updatingData._id %>" method="post" enctype="multipart/form-data" style="max-width: 50%; margin:5% 0  0 30% ;">
+        <div class="modal-header">						
+            <h2 class="text-center">Edit Product</h2>
+            
+        </div>
+        <div class="modal-body">					
+            
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name" required value="<%= updatingData.name %>"  pattern="[A-Za-z][A-Za-z0-9 ]*" maxlength="100" oninput="validateName(this.value)">
+                <div class="validation-message" id="nameValidation" style="color: red;"></div>
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input type="text" class="form-control" name="price" required value="<%= updatingData.price %>"  maxlength="10" oninput="validatePrice(this.value)">
+                <div class="validation-message" id="priceValidation" style="color: red;"></div>
+            </div>
+            
+            <div class="form-group">
+                
+                <label>Category</label>
+                <select name="categoryName" class="form-control">
+                    <% for (let i = 0; i < categories.length; i++) { %>
+                        <option value="<%= categories[i].name %>" <%= (categories[i].name === updatingData.category.name) ? 'selected' : '' %>>
+                            <%= categories[i].name %>
+                        </option>
+                    <% } %>
+                </select>
+                
+            
+                        </div>
+            <div class="form-group">
+                <label>Sub-category</label>
+                
+                <select name="subCategoryName" class="form-control">
+                    <% for (let i = 0; i < subCategories.length; i++) { %>
+                        <option value="<%= subCategories[i].name %>" <%= (subCategories[i].name === updatingData.subCategory.name) ? 'selected' : '' %>>
+                            <%= subCategories[i].name %>
+                        </option>
+                    <% } %>
+                </select>
+                
+                
+            </div>
+            <div class="form-group">
+                <label>Validity Status</label>
+                <select class="form-control" name="isValid" required>
+                    <option value="true" <% if (updatingData.isValid === true) { %>selected<% } %>>True</option>
+                    <option value="false" <% if (updatingData.isValid === false) { %>selected<% } %>>False</option>
+                </select>
+                
+            </div>	
+            <div class="form-group" >
+                <label>Images</label>
+                <div  style="display: flex; ">
+                    <% for(let i=0; i<updatingData.images.length; i++){ %>
+                        <div style="display: flex; flex-direction: column; border: 1px solid rgb(160, 148, 148); margin: 15px; "><img style="width: 100px; height: 100px; padding: 5px;" class="img-fluid w-100" src="<%= updatingData.images[i] %>" alt=""> 
+                        <button type="button" class="close" aria-label="Close">
+                            <span aria-hidden="true"><a href="/admin/deletePdtImage/<%= updatingData._id %>/<%= updatingData.images[i].replace('/uploads/', '') %>" style="text-decoration: none; color:black; font-size: 35px;">&times;</a></span> 
+                          </button>
+                        </div>
+                        <% } %>
+                </div>
+                <div><i class="icon-remove"></i>
+                </div>
+                <input type="file" id="images" name="images" accept="image/*" multiple class="form-control">
+            </div>	
+            <% if(updatingData.variants!=='undefined') { %>
+            <div class="form-group" >
+                <label>Variants</label>
+                <div  style="display: flex; ">
+                    <% for(let i=0; i<updatingData.variants.length; i++){ %>
+                        <div style="width: 100%; display: flex; flex-direction: column; justify-content: space-between;"> 
+                        <div><label><%= updatingData.variants[i].color %></label></div>
+                        <% for(let j=0; j<updatingData.variants[i].sizes.length; j++){ %>
+                            <div style="display: flex; margin: 5px;">
+                                <div><%= updatingData.variants[i].sizes[j].size %></div>
+                                <div style="padding-left: 10px;">- <%= updatingData.variants[i].sizes[j].quantity %></div>
+                            </div>
+                            
+                        <% } %>
+                        </div>
+                        <% } %>
+                </div>
+                
+            </div>	
+            <% } %>
+        </div>
+        <div class="modal-footer">
+            <button><a href="/admin/products/" style="text-decoration: none; padding: 10px;">Cancel</a></button>
+            <button type="submit" class="btn btn-info"  > save</button>
+        </div>
+    </form>
+    </section>
