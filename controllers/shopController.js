@@ -1,7 +1,6 @@
 const Products = require('../models/product')
 const Categories = require('../models/category')
-const Subcategories = require('../models/subCategory')
-const Offers = require('../models/offer')
+const Banners=require('../models/banner')
 
 
 
@@ -10,7 +9,8 @@ const getHome = async (req, res, next) => {
     try {
         const products = await Products.find()
         const categories = await Categories.find({ isValid: true })
-        res.render('user/home', { layout: false, products, categories })
+        const banners=await Banners.find()
+        res.render('user/home', { layout: false, products, categories,banners })
     } catch (e) {
         next(e)
     }

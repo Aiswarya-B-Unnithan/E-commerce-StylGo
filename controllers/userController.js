@@ -53,28 +53,8 @@ const postLogin = async (req, res) => {
                     //send email
                     try {
                         helpers.sendEmail(email, sub, msg)
-                        //res.render('user/otp', { layout: false, additionalData })  //for easy work just hide
-                        req.session.authenticated = true
-                        req.session.user = userFromLogin
-                        const cart = await Cart.findOne({ user: userFromLogin._id })
-                            console.log('cart from login',cart)
-                        if (cart){
-                                
-                            req.session.cartQuantity = cart.totalQuantity
-                        }
-                        if (req.session.returnTo) {
-                            const returnTo = req.session.returnTo;
-                            console.log('url',returnTo)
-                            delete req.session.returnTo; // Remove the stored referrer URL
-                            res.redirect(returnTo); // Redirect the user to the referrer URL
-
-                        } else {
-                            res.redirect('/')
-                        }
-
-
-
-
+                        res.render('user/otp', { layout: false, additionalData })  //for easy work just hide
+                        
                     } catch (error) {
                         console.log('Error in sending mail', error)
                         res.status(500).json({ error: 'Internal Server Error' })
@@ -105,23 +85,22 @@ const postOtp = async (req, res) => {
         const additionalData = categories
 
         if (otpToValidate === userFromLogin.otp) {
+            
             req.session.authenticated = true
-            req.session.user = userFromLogin
-            const cart = await Cart.findOne({ user: userFromLogin._id })
-            if (cart)
-                req.session.cartQuantity = cart.totalQuantity
-            if (req.session.returnTo) {
-                const returnTo = req.session.returnTo;
-                delete req.session.returnTo; // Remove the stored referrer URL
-                console.log('return from otp', returnTo)
-                console.log('/addToCart' === returnTo)
-                //res.redirect(`${returnTo}`); // Redirect the user to the referrer URL
-                res.redirect('/')
-            } else {
-                // If there's no referrer URL, redirect to a default page
+                        req.session.user = userFromLogin
+                        const cart = await Cart.findOne({ user: userFromLogin._id })
+                        if (cart){
+                                
+                            req.session.cartQuantity = cart.totalQuantity
+                        }
+                        if (req.session.returnTo) {
+                            const returnTo = req.session.returnTo;
+                            delete req.session.returnTo; // Remove the stored referrer URL
+                            res.redirect(returnTo); // Redirect the user to the referrer URL
 
-                res.redirect('/')
-            }
+                        } else {
+                            res.redirect('/')
+                        }
 
         } else {
             res.render('user/otp', { layout: false, error: { message: 'Invalid Otp', additionalData } })
@@ -172,8 +151,6 @@ const getSignUp = async (req, res) => {
     } catch (e) {
         console.log('error in signup load', e.message)
     }
-
-    console.log('session data from get signup', req.session.user)
 
 
 
@@ -230,7 +207,6 @@ const postSignUp = async (req, res) => {
                         req.session.authenticated = true
                         req.session.user = data
                         req.session.cartQuantity = 0
-                        console.log('session set from register page : ', req.session)
 
                         res.redirect('/profile')
 

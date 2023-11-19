@@ -1,11 +1,6 @@
 
 const Products=require('../models/product')
 const Categories=require('../models/category')
-const User=require('../models/user')
-const bcrypt=require('bcrypt')
-const helpers=require('../helpers/signIn-signUp')
-const Variants=require('../models/variants')
-const Order=require('../models/order')
 const Cart=require('../models/cart')
 
 

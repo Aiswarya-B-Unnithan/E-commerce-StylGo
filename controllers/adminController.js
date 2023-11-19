@@ -105,8 +105,10 @@ const postResend = async (req, res) => {
 //post logout
 const postLogout = (req, res) => {
     req.session.adminAuthenticated = false
+    req.session.destroy()
     res.redirect('/admin')
 }
+
 //get dashboard
 const getDashboard =async (req, res,next) => {
     try{

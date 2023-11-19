@@ -143,6 +143,7 @@ const placeOrder = async (req, res) => {
         const user = await User.findOne({ email: req.session.user.email })
 
         let { paymentMethod, totalAmount } = req.body
+        totalAmount=parseFloat(totalAmount).toFixed(2)
 
         let addressParts = (req.body.address).split('_')
         let addressIndex = parseInt(addressParts[1])

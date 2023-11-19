@@ -129,7 +129,7 @@
                         </thead>
                         <tbody>
                             <% for(let i=0;i<=8;i++){
-                                if(i<=totalOrders.length){ %>
+                                if(i<totalOrders.length){ %>
                               <tr>
                                 <td><%= totalOrders[i].user.fullName %></td>
                                 <td><%= totalOrders[i].totalAmount %></td>

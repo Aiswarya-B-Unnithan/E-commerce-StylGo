@@ -27,7 +27,9 @@ const validateName=(name)=>{
         }
 }
 const validatePassword=(password)=>{
-    var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+    //var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+    var regularExpression = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+
     if (password.length < 8) {
         return { message: 'Password must be at least 8 characters long' };
     }else if(!(regularExpression.test(password))){

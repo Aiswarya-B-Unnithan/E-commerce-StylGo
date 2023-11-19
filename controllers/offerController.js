@@ -94,7 +94,7 @@ const getOffers = async (req, res, next) => {
   
               }else if(offerFor==='subCategory'){
                 if(pdt.subCategory.name===offerForName){
-                  if(pdt.offer.discountPercentage<discountPercentage){// apply max offer
+                  if(!(pdt.offer)||pdt.offer.discountPercentage<discountPercentage){// apply max offer
                     pdt.offer=newOffer._id
                     pdt.offerAmt=(pdt.price*discountPercentage)/100
                     pdt.price=(pdt.price-((pdt.price*discountPercentage)/100)).toFixed(2)
