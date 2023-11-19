@@ -1,4 +1,8 @@
 const Admin = require('../models/admin')
+const users=require('../models/user')
+const Orders=require('../models/order')
+const Categories=require('../models/category')
+const SubCategories=require('../models/subCategory')
 const sendEmail = require('../helpers/sendEmail')
 
 
@@ -98,13 +102,35 @@ const postResend = async (req, res) => {
     }
 }
 
-const getDashboard = async (req, res) => {
-    res.render('admin/dashboard', { layout: './layout/admin-main' })
+//post logout
+const postLogout = (req, res) => {
+    req.session.adminAuthenticated = false
+    res.redirect('/admin')
+}
+//get dashboard
+const getDashboard =async (req, res,next) => {
+    try{
+      const customersList=await users.find().sort({createdAt:-1})
+      console.log('c l',customersList[2].fullName)
+      const totalCustomers=await users.find().count()
+      const totalOrders=await Orders.find().sort({orderDate:-1})
+      const orderCount=await Orders.find().count()
+      const categoryList=await Categories.find({isValid:true})
+      const categoryCount=await Categories.find({isValid:true}).count()
+      const subCategoryCount=await SubCategories.find({isValid:true}).count()
+     
+  
+      res.render('admin/dashboard', { layout: './layout/admin-main',totalCustomers,orderCount,categoryCount,totalEarnings:4000,totalOrders,customersList,categoryList,subCategoryCount })
+  
+    }catch(e){
+      next(e)
+    }
 }
 module.exports = {
     getLogin, 
     postLogin, 
     postOtp, 
     postResend, 
-    getDashboard
+    getDashboard,
+    postLogout
 }

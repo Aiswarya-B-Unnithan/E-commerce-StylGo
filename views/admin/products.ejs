@@ -1,7 +1,15 @@
 
         <!-- ========================= product management ==================== -->
-        <div class="main" style="width: 100%;">
-            <h1 style="padding-left: 20%; margin: 5%;">Product Management</h1>
+        <div class="main" >
+            
+    <div class="topbar">
+        <div class="toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </div>
+        <a  class="nav-item nav-link"><form action="/admin/logout" method="post"><button class=" btn" type="submit">Logout</button></form></a>
+       
+    </div>
+            <h1 style="padding-left: 20%; ">Product Management</h1>
             <div style="display: flex; margin:20px;">
                 <form action="/admin/searchProducts" method="GET"  >
                     <input class="searchFormInput"
@@ -20,7 +28,7 @@
             </div>
             
             <!--===================table=============-->
-            <div class="details" style="grid-template-columns: 2fr 1fr;">
+            <div class="details" >
                 <% if( typeof productList!=='undefined' && productList.length!==0){ %>
                 
                 <div class="recentOrders">
@@ -109,8 +117,24 @@
             </div>
 
            
+<!-- Pagination Section -->
+ 
+<div class="col-12 pb-1 text-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-3">
+            <% for (let page=1; page <=totalPages; page++) { %>
+                <li class="page-item <% if (page === currentPage) { %>active<% } %>" >
+                    <a class="page-link" href="?page=<%= page %>" <% if (page === currentPage) { %> style="background-color: #bb5f57;" <% } %>>
+                        <%= page %>
+                    </a>
+                </li>
+                <% } %>
+        </ul>
+    </nav>
+</div>
                
         </div>
+        
         <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -130,6 +154,7 @@
               </div>
             </div>
           </div>
+          
           <script>
             // Capture the category ID when the user confirms the deletion
             $('#deleteProductModal').on('show.bs.modal', function (event) {

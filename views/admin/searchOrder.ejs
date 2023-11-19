@@ -1,0 +1,451 @@
+<!-- ========================= Order management ==================== -->
+<div class="main" style="width: 100%;">
+    <h1 style="padding-left: 20%; margin: 5%;">Order Management</h1>
+    <div style="display: flex; margin:20px;">
+                <form action="/admin/searchOrders" method="GET"  >
+                    <input class="searchFormInput"
+                      type="text"
+                      name="searchQuery"
+                      placeholder="Search by order id"
+                      style="width: fit-content;"
+                    />
+                    <button type="submit" class="clickBtn btnYellow">Search</button>
+                </form>
+
+               
+            </div> 
+
+    <!--===================table=============-->
+    <div class="details" style="padding:0; grid-template-columns: 4fr 1fr;">
+        <% if( typeof orders!=='undefined' && orders.length!==0){ %>
+
+            <div class="recentOrders">
+
+
+
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Order Id</td>
+                            <td>User Name</td>
+                            <td>Order Total</td>
+                            <td>Date</td>
+                            <td>PaymentMethod</td>
+                            <td>Status</td>
+                            <td>Change status</td>
+                            <td>Details</td>
+
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% if(Array.isArray(orders)){ %>
+                            <% for(let i=0; i < orders.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= orders[i]._id %>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].user.fullName %>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].totalAmount %>
+                                    </td>
+                                    <td>
+                                        <% const rawDate=new Date(orders[i].orderDate); %>
+                                            <% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+                                                <% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+                                                    <% const year=rawDate.getFullYear(); %>
+
+                                                        <%= `${day}-${month}-${year}` %>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].paymentMethod %>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].status %>
+                                    </td>
+
+                                    <% if( (orders[i].status==='cancelled' )||(orders[i].status==='return' )||(orders[i].status==='Failed' )){ %>
+                                        <td>
+                                            <h5>No Action</h5>
+                                        </td>
+                                        <% } else { %>
+
+
+
+                                            <td>
+                                                <button class="clickBtn editBtn btnGreen" data-toggle="modal"
+                                                    data-target="#statusModal<%= orders[i]._id %>">
+                                                    Change
+                                                </button>
+                                                <!-- Status Change Modal -->
+                                                <div class="modal fade" id="statusModal<%= orders[i]._id %>"
+                                                    tabindex="-1" role="dialog" aria-labelledby="statusModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header text-center">
+                                                                <h5 class="modal-title" id="statusModalLabel"
+                                                                    style="color: black;">Change Status </h5>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form
+                                                                action="/admin/orders/changeStatus/<%= orders[i]._id %>"
+                                                                method="post">
+                                                                <div class="modal-body">
+                                                                    <!-- Status change form -->
+
+                                                                    <div class="form-group">
+
+                                                                        <select class="form-control" id="newStatus"
+                                                                            name="newStatus">
+                                                                            <option value="Order Confirmed">Order
+                                                                                Confirmed</option>
+                                                                            <option value="Processing">Processing
+                                                                            </option>
+                                                                            <option value="Shipped">Shipped</option>
+                                                                            <option value="Delivered">Delivered</option>
+                                                                            <option value="Success">Success</option>
+                                                                        </select>
+                                                                    </div>
+
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal"
+                                                                            style="color: black;">Close</button>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary">Save
+                                                                            changes</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <% } %>
+                                                <td>
+                                                    <button class="btn" data-toggle="modal"
+                                                        data-target="#detail<%= orders[i]._id %>">
+                                                        View
+                                                    </button>
+                                                    <!-- view details -->
+                                                    <div class="modal fade" style="width: 100%;"
+                                                        id="detail<%= orders[i]._id %>" tabindex="-1"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header text-center">
+                                                                    <h5 class="modal-title" id="statusModalLabel"
+                                                                        style="color: black;">
+                                                                        OrderId - <%= orders[i]._id %>
+                                                                    </h5>
+                                                                    <button type="button" class="close"
+                                                                        data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="modal-body">
+                                                                    <table>
+                                                                        <tr>
+                                                                            <td>
+                                                                                Order Date
+                                                                            </td>
+                                                                            <td>
+                                                                                <%= `${day}-${month}-${year}` %>
+                                                                            </td>
+                                                                        </tr>
+
+
+
+
+                                                                        <% for(let j=0; j< orders[i].items.length;j++){
+                                                                            %>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Item-<%= j+1 %>
+                                                                                </td>
+                                                                                <td>
+
+                                                                                    <%= orders[i].items[j].product.name
+                                                                                        %> ,
+
+                                                                                        color - <%=
+                                                                                            orders[i].items[j].color %>
+                                                                                            ,
+
+                                                                                            size - <%=
+                                                                                                orders[i].items[j].size
+                                                                                                %>
+                                                                                </td>
+
+                                                                            </tr>
+                                                                            <% } %>
+
+                                                                                <tr>
+                                                                                    <td>Address</td>
+                                                                                    <td>
+                                                                                        <%= orders[i].address %>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Total Amount</td>
+                                                                                    <td>
+                                                                                        <%= orders[i].totalAmount %>
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                                <tr>
+                                                                                    <td>Payment Method</td>
+                                                                                    <td>
+                                                                                        <%= orders[i].paymentMethod %>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Status</td>
+                                                                                    <td>
+                                                                                        <%= orders[i].status %>
+                                                                                    </td>
+                                                                                </tr>
+                                                                    </table>
+
+
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal"
+                                                                            style="color: black;">Close</button>
+
+                                                                    </div>
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                </tr>
+                                <% } %>
+
+                                    <% } else { %>
+                                        <tr>
+                                            <td>
+                                                <%= orders._id %>
+                                            </td>
+                                            <td>
+                                                <%= orders.user.fullName %>
+                                            </td>
+                                            <td>
+                                                <%= orders.totalAmount %>
+                                            </td>
+                                            <td>
+                                                <% const rawDate=new Date(orders.orderDate); %>
+                                                    <% const year=rawDate.getFullYear(); %>
+                                                        <% const month=String(rawDate.getMonth() + 1).padStart(2, '0' );
+                                                            %>
+                                                            <% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+                                                                <%= `${year}-${month}-${day}` %>
+                                            </td>
+                                            <td>
+                                                <%= orders.paymentMethod %>
+                                            </td>
+                                            <td>
+                                                <%= orders.status %>
+                                            </td>
+
+                                            <% if( (orders.status==='cancelled' )||(orders.status==='return' )||(orders.status==='Failed' )){ %>
+                                                <td>
+                                                    <h5>No Action</h5>
+                                                </td>
+                                                <% } else { %>
+        
+        
+        
+                                                    <td>
+                                                        <button class="clickBtn editBtn btnGreen" data-toggle="modal"
+                                                            data-target="#statusModal<%= orders._id %>">
+                                                            Change
+                                                        </button>
+                                                        <!-- Status Change Modal -->
+                                                        <div class="modal fade" id="statusModal<%= orders._id %>"
+                                                            tabindex="-1" role="dialog" aria-labelledby="statusModalLabel"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header text-center">
+                                                                        <h5 class="modal-title" id="statusModalLabel"
+                                                                            style="color: black;">Change Status </h5>
+                                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                            aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <form
+                                                                        action="/admin/orders/changeStatus/<%= orders._id %>"
+                                                                        method="post">
+                                                                        <div class="modal-body">
+                                                                            <!-- Status change form -->
+        
+                                                                            <div class="form-group">
+        
+                                                                                <select class="form-control" id="newStatus"
+                                                                                    name="newStatus">
+                                                                                    <option value="Order Confirmed">Order
+                                                                                        Confirmed</option>
+                                                                                    <option value="Processing">Processing
+                                                                                    </option>
+                                                                                    <option value="Shipped">Shipped</option>
+                                                                                    <option value="Delivered">Delivered</option>
+                                                                                    <option value="Success">Success</option>
+                                                                                </select>
+                                                                            </div>
+        
+        
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary"
+                                                                                    data-dismiss="modal"
+                                                                                    style="color: black;">Close</button>
+                                                                                <button type="submit"
+                                                                                    class="btn btn-primary">Save
+                                                                                    changes</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+        
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <% } %>
+                                                    <td>
+                                                        <button class="btn" data-toggle="modal"
+                                                            data-target="#detail<%= orders._id %>">
+                                                            View
+                                                        </button>
+                                                        <!-- view details -->
+                                                        <div class="modal fade" style="width: 100%;"
+                                                            id="detail<%= orders._id %>" tabindex="-1"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header text-center">
+                                                                        <h5 class="modal-title" id="statusModalLabel"
+                                                                            style="color: black;">
+                                                                            OrderId - <%= orders._id %>
+                                                                        </h5>
+                                                                        <button type="button" class="close"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+    
+                                                                    <div class="modal-body">
+                                                                        <table>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    Order Date
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= `${day}-${month}-${year}` %>
+                                                                                </td>
+                                                                            </tr>
+    
+    
+    
+    
+                                                                            <% for(let j=0; j< orders.items.length;j++){
+                                                                                %>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        Item-<%= j+1 %>
+                                                                                    </td>
+                                                                                    <td>
+    
+                                                                                        <%= orders.items[j].product.name
+                                                                                            %> ,
+    
+                                                                                            color - <%=
+                                                                                                orders.items[j].color %>
+                                                                                                ,
+    
+                                                                                                size - <%=
+                                                                                                    orders.items[j].size
+                                                                                                    %>
+                                                                                    </td>
+    
+                                                                                </tr>
+                                                                                <% } %>
+    
+                                                                                    <tr>
+                                                                                        <td>Address</td>
+                                                                                        <td>
+                                                                                            <%= orders.address %>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Total Amount</td>
+                                                                                        <td>
+                                                                                            <%= orders.totalAmount %>
+                                                                                        </td>
+                                                                                    </tr>
+    
+                                                                                    <tr>
+                                                                                        <td>Payment Method</td>
+                                                                                        <td>
+                                                                                            <%= orders.paymentMethod %>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Status</td>
+                                                                                        <td>
+                                                                                            <%= orders.status %>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                        </table>
+    
+    
+    
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary"
+                                                                                data-dismiss="modal"
+                                                                                style="color: black;">Close</button>
+    
+                                                                        </div>
+                                                                    </div>
+    
+    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                        
+                                        </tr>
+                                        <% } %>
+
+
+                    </tbody>
+                </table>
+
+
+            </div>
+            <% }else{ %>
+
+                <h1>
+                    No data found
+                </h1>
+
+                <% } %>
+               
+    </div>
+
+
+</div>

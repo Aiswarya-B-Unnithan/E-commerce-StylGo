@@ -18,6 +18,8 @@ const app=express()
 
 //use layouts middleware
 app.use(expressLayouts)
+const nocache=require('nocache')
+app.use(nocache());
 
 //parsing
 app.use(express.json())
@@ -50,6 +52,13 @@ app.use((req,res,next)=>{
 //routes
 app.use('/',userRoutes)
 app.use('/admin',adminRoutes)
+
+// // Handling undefined routes (404 Not Found)
+// app.use((req, res, next) => {
+//     const err = new Error('Not Found');
+//     err.status = 404;
+//     next(err); // Pass the error to the next middleware
+//   });
 
 //error handling by global error handling middleware
 app.use(errorMiddleware)

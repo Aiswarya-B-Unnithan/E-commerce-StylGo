@@ -32,6 +32,7 @@ const postSubCategory = async (req, res) => {
             `;
   
         res.status(400).send(script);
+        return
       } else {
   
         // Process each uploaded image
@@ -93,6 +94,22 @@ const postSubCategory = async (req, res) => {
     const { name, description, isValid } = req.body
     const uploadedImages = req.files;
     const processedImageURLs = []
+    const categoryId = req.params.id
+    const categoryToUpdate=await SubCategories.findById(categoryId)
+    if(categoryToUpdate.name!==name){
+        const existingCategory = await SubCategories.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+    if (existingCategory) {
+        const script = `
+          <script>
+            alert("Sub-category with the name '${existingCategory.name}' already exists.");
+            window.history.back();
+          </script>
+        `;
+
+        res.status(400).send(script);
+        return
+    }
+  }
     for (const image of uploadedImages) {
       // Use sharp to crop and resize the image
       await sharp(image.path)
@@ -103,7 +120,7 @@ const postSubCategory = async (req, res) => {
       processedImageURLs.push(`/uploads/cropped_${image.filename}`);
     }
   
-    const categoryId = req.params.id
+    
     const category = await SubCategories.findOne({ _id: categoryId })
     const images = [...category.images, ...processedImageURLs]
     const data = { name, description, images, isValid }

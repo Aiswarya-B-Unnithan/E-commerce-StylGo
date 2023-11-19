@@ -1,7 +1,15 @@
 
         <!-- ========================= category management ==================== -->
         <div class="main">
-            <h1 style="padding-left: 20%; margin: 5%;">Sub Category Management</h1>
+            
+    <div class="topbar">
+        <div class="toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </div>
+        <a  class="nav-item nav-link"><form action="/admin/logout" method="post"><button class=" btn" type="submit">Logout</button></form></a>
+       
+    </div>
+            <h1 style="padding-left: 20%; ">Sub Category Management</h1>
             <div style="display: flex; margin:20px;">
                 <form action="/admin/searchSubCategory" method="GET"  >
                     <input class="searchFormInput"

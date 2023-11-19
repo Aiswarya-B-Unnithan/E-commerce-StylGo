@@ -1,0 +1,128 @@
+<section>
+    <form action="/admin/editCoupon/<%= updatingData._id %>" method="post" style="max-width: 50%; margin:5% 0  0 30% ;">
+        <div class="modal-header">						
+            <h2 class="text-center">Edit Coupon</h2>
+            
+        </div>
+        <div class="modal-body">					
+            <div class="form-group">
+                <label>Coupon Name</label>
+                <input
+                type="text"
+                class="form-control"
+                name="couponName"
+                required
+                value="<%= updatingData.couponName %>"
+              />            
+            </div>
+            <div class="form-group">
+                <label>Coupon Code</label>
+                <input
+                type="text"
+                class="form-control"
+                name="couponCode"
+                required
+                value="<%= updatingData.couponCode %>"
+              />            
+            </div>
+            <div class="form-group">
+              <label>Discount Type</label>
+              <select id="discountType" name="discountType" required class="form-control">
+                <option value="fixed"  <%= (updatingData.discountType==='fixed') ? 'selected' : ''  %>>Fixed Amount</option>
+                <option value="percentage" <%= (updatingData.discountType==='percentage') ? 'selected' :'' %>>Percentage</option>
+            </select>
+                    
+          </div>
+          <div class="form-group">
+            <label>Value</label>
+            <input
+            type="text"
+            class="form-control"
+            name="discountValue"
+            required
+            value="<%= updatingData.discountValue %>"
+          />            
+        </div>
+        <div class="form-group">
+          <label>Coupon For</label>
+          <input
+          type="text"
+          class="form-control"
+          name="couponFor"
+          required
+          value="<%= updatingData.couponFor %>"
+        />            
+      </div>
+      <div class="form-group">
+        <label>Name</label>
+        <input
+        type="text"
+        class="form-control"
+        name="couponForName"
+        required
+        value="<%= updatingData.couponForName %>"
+      />            
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <input
+      type="text"
+      class="form-control"
+      name="description"
+      required
+      value="<%= updatingData.description %>"
+    />            
+  </div>
+  
+            <div class="form-group">
+                
+                <label>Start date</label>
+                <input
+                type="text"
+                class="form-control"
+                name="startDate"
+                id="startDate"
+                required
+                <% const rawDate=new Date(updatingData.startDate); %>
+                <% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+                    <% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+                        <% const year=rawDate.getFullYear(); %>
+                        value="  <%= ` mm/dd/yy    ${month}-${day}-${year}   ` %> ""
+              />            
+            </div>
+            <div class="form-group">
+                <label>End date</label>
+                <input
+                type="text"
+                class="form-control"
+                name="endDate"
+                id="endDate"
+                required
+                <% const rawDate2=new Date(updatingData.endDate); %>
+                <% const day2=String(rawDate2.getDate()).padStart(2, '0' ); %>
+                    <% const month2=String(rawDate2.getMonth() + 1).padStart(2, '0' ); %>
+                        <% const year2=rawDate2.getFullYear(); %>
+                        value="  <%= ` mm/dd/yy     ${month2}-${day2}-${year2}` %> "
+               
+              />            
+            </div>
+            
+            <div class="form-group">
+                <label>Min purchase Amt</label>
+                <input
+                type="text"
+                class="form-control"
+                name="minPurchaseAmt"
+                required
+                value="<%= updatingData.minPurchaseAmt %>"
+              />            
+            </div>	
+        </div>
+        <div class="modal-footer">
+            <button><a href="/admin/coupon" style="text-decoration: none; padding: 10px;">Cancel</a></button>
+            <button type="submit" class="btn btn-info"  > save</button>
+        </div>
+    </form>
+    </section>
+
+    

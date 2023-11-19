@@ -2,46 +2,55 @@
 <div>
     <div class="modal-dialog" style="width: 65%; width: 100vh;">
         <div class="modal-content">
-            <form action="/admin/product/add" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-                <div class="modal-header">						
+            <form action="/admin/product/add" method="post" enctype="multipart/form-data"
+                onsubmit="return validateForm()">
+                <div class="modal-header">
                     <h4 class="modal-title">Add product</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
-                <div class="modal-body">					
+                <div class="modal-body">
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="name" required id="nameInput" pattern="[A-Za-z][A-Za-z0-9 ]*" maxlength="100" oninput="validateName(this.value)" >
+                        <input type="text" class="form-control" name="name" required id="nameInput"
+                            pattern="[A-Za-z][A-Za-z0-9 ]*" maxlength="100" oninput="validateName(this.value)" onblur="checkName(this.value)">
                         <div class="validation-message" id="nameValidation" style="color: red;"></div>
                     </div>
                     <div class="form-group">
                         <label>Price</label>
-                        <input type="text" class="form-control" name="price" required id="priceInput" maxlength="10" oninput="validatePrice(this.value)">
+                        <input type="text" class="form-control" name="price" required id="priceInput" maxlength="10"
+                            oninput="validatePrice(this.value)">
                         <div class="validation-message" id="priceValidation" style="color: red;"></div>
                     </div>
                     <div class="form-group">
                         <label>Category</label>
                         <select name="categoryName" class="form-control" required>
                             <% for(let i=0; i<categories.length ;i++){ %>
-                                <option value="<%= categories[i] %>"><%= categories[i] %></option> 
-                            <% } %>
+                                <option value="<%= categories[i] %>">
+                                    <%= categories[i] %>
+                                </option>
+                                <% } %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Sub-Category</label>
                         <select name="subCategoryName" class="form-control" required>
                             <% for(let i=0; i<subCategories.length ;i++){ %>
-                                <option value="<%= subCategories[i] %>"><%= subCategories[i] %></option> 
-                            <% } %>
+                                <option value="<%= subCategories[i] %>">
+                                    <%= subCategories[i] %>
+                                </option>
+                                <% } %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="description" required id="descriptionInput" maxlength="300"></textarea>
+                        <textarea class="form-control" name="description" required id="descriptionInput"
+                            maxlength="300"></textarea>
                         <div class="validation-message" id="descriptionValidation"></div>
                     </div>
                     <div class="form-group">
                         <label>Images</label>
-                        <input type="file" id="images" name="images" accept="image/*" multiple class="form-control" required id="imagesInput">
+                        <input type="file" id="images" name="images" accept="image/*" multiple class="form-control"
+                            required id="imagesInput">
                         <div class="validation-message" id="imagesValidation"></div>
                     </div>
                 </div>
@@ -56,32 +65,53 @@
 
 
 <script>
-    function validateName(nameVal) {
-        const name=nameVal.trim()
-        document.getElementById("nameValidation").innerText=""
-        console.log('helllo',name)
+    async function validateName(nameVal) {
+        const name = nameVal.trim()
+        document.getElementById("nameValidation").innerText = ""
+        console.log('helllo', name)
         const namePattern = /^(?![0-9])[\w\s]{1,50}$/;
 
-        if (!name.match(namePattern)||!(name)) {
+        if (!name.match(namePattern) || !(name)) {
 
             document.getElementById("nameValidation").innerText = "Invalid name.Name can't be empty and can't start with numbers";
-           
+
         }
+    }
+    async function checkName(nameVal) {
+        const name = nameVal.trim()
+        document.getElementById("nameValidation").innerText = ""
+        
+            const response = await fetch(`/admin/add-product-nameCheck/${name}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+
+                }
+            })
+            if (response.ok) {
+                const result = await response.json();
+                console.log('res', result)
+                if(result===true){
+                    document.getElementById("nameValidation").innerText =`Product with name ${name} already exists`
+                }
+
+            }
+        
     }
 
     function validatePrice(priceVal) {
         document.getElementById("priceValidation").innerText = "";
-        const pricePattern=/^(?!0\d)[0-9]*(\.[0-9]{0,5})?$/
-        const price=priceVal.trim()
-        if(!price.match(pricePattern)||!price){
-            document.getElementById("priceValidation").innerText = "Price must be a positive number with decimal points upto 5 digits, Cannot start with 0 and can,t include characters";
+        const pricePattern = /^(?!0\d)[0-9]*(\.[0-9]{0,5})?$/
+        const price = priceVal.trim()
+        if (!price.match(pricePattern) || !price) {
+            document.getElementById("priceValidation").innerText = "Price must be a positive number with decimal points upto 5 digits, Cannot start with 0 and can't include characters";
         }
         // // const price = parseFloat(priceVal);
         // console.log(price)
         // if (isNaN(price) || price <= 0) {
         //     document.getElementById("priceValidation").innerText = "Price must be a positive number";
         // }
-        
+
     }
 
 </script>

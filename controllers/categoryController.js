@@ -37,6 +37,7 @@ const postCategory = async (req, res, next) => {
             `;
 
             res.status(400).send(script);
+            return
         }
         else {
             // Process each uploaded image
@@ -105,8 +106,26 @@ const postEditCategory = async (req, res, next) => {
 
 
     const { name, description, isValid } = req.body
+    const categoryId = req.params.id
+    const categoryToUpdate=await Categories.findById(categoryId)
+    if(categoryToUpdate.name!==name){
+        const existingCategory = await Categories.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+    if (existingCategory) {
+        const script = `
+          <script>
+            alert("Category with the name '${existingCategory.name}' already exists.");
+            window.history.back();
+          </script>
+        `;
+
+        res.status(400).send(script);
+        return
+    }
+
+    }
     const uploadedImages = req.files;
     const processedImageURLs = []
+    
     for (const image of uploadedImages) {
         // Use sharp to crop and resize the image
         await sharp(image.path)
@@ -116,8 +135,6 @@ const postEditCategory = async (req, res, next) => {
         // Add the processed image's URL to the response
         processedImageURLs.push(`/uploads/cropped_${image.filename}`);
     }
-
-    const categoryId = req.params.id
     const category = await Categories.findOne({ _id: categoryId })
     const images = [...category.images, ...processedImageURLs]
     const data = { name, description, images, isValid }
@@ -204,6 +221,24 @@ const deleteCategoryImage = async (req, res, next) => {
         next(error)
     }
 }
+const addCategoryNameCheck=async(req,res,next)=>{
+    
+    try{
+        console.log('check name pdt ')
+        const pdtName=req.params.name
+        const existingCategory = await Categories.findOne({ name: { $regex: new RegExp(pdtName, 'i') } });
+
+        if(existingCategory){
+            res.json(true)
+        }else{
+            res.json(false)
+        }
+       
+
+    }catch(e){
+        next(e)
+    }
+  }
 
 module.exports = {
     getCategories,
@@ -212,5 +247,6 @@ module.exports = {
     getdeleteCategory,
     postCategory,
     postEditCategory,
-    deleteCategoryImage
+    deleteCategoryImage,
+    addCategoryNameCheck
 }

@@ -1,0 +1,793 @@
+<style>
+  .initial-avatar {
+    width: 150px;
+    height: 150px;
+    background-color: #e0675c;
+    /* Change the background color as needed */
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 24px;
+  }
+</style>
+<div>
+  <div class="row col-md-12" style="margin-top: 15px;">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex flex-column align-items-center text-center">
+            <% if(currentUser.profileImage){ %>
+              <img src="<%= currentUser.profileImage %>" alt="Admin" class="rounded-circle" width="150" height="150">
+              <% } else{ %>
+                <div class="initial-avatar">
+                  <span style="font-size:70px;">
+                    <%= currentUser.fullName.charAt(0).toUpperCase() %>
+                  </span>
+                </div>
+                <% } %>
+
+
+                  <div class="mt-3">
+                    <h4>
+                      <%= currentUser.fullName %>
+                    </h4>
+                    <% if(currentUser.profileImage){ %>
+                      <button class="btn btn-outline-primary"><a href="#addProfileImage" class="edit"
+                          data-toggle="modal" data-toggle="tooltip" title="AddImage"
+                          style="text-decoration: none; color: black;">Edit</a></button>
+                      <% } else{ %>
+                        <button class="btn btn-outline-primary"><a href="#addProfileImage" class="edit"
+                            data-toggle="modal" data-toggle="tooltip" title="AddImage"
+                            style="text-decoration: none; color: black;">Add Image</a></button>
+
+                        <% } %>
+
+                  </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-3">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+            <h4><button id="my-profile-btn" class="btn-light text-primary">My Profile</button></h4>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+            <h4><button class="btn-light text-primary" id="orders-btn">Orders</button></h4>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+            <h4><button id="addresses-btn" class="btn-light text-primary">Addresses</button></h4>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+            <h4><button class="btn-light text-primary" id="wallets-btn">Wallets</button></h4>
+          </li>
+          <!-- <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github mr-2 icon-inline"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>Github</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter mr-2 icon-inline text-info"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>Twitter</h6>
+                    <span class="text-secondary">@bootdey</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram mr-2 icon-inline text-danger"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-facebook mr-2 icon-inline text-primary"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li> -->
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="col-md-9" id="my-profile">
+        <div class="row" style="text-align: center;">
+          <h1 >Profile</h1>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Full Name</h6>
+              </div>
+              <div class="col-sm-9 text-dark">
+                <%= currentUser.fullName %>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Email</h6>
+              </div>
+              <div class="col-sm-9 text-dark">
+                <%= currentUser.email %>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Mobile</h6>
+              </div>
+              <div class="col-sm-9 text-dark">
+                <%= currentUser.mobileNo %>
+              </div>
+            </div>
+            <hr>
+            <% if( error && error!=='undefined' ){ %>
+              <div class="row">
+                <div class="col-sm-12">
+                  <p style="color: red;">Couldn't change password as <%= error.message %>
+                  </p>
+                </div>
+              </div>
+              <% } %>
+                <% if(messages.success) { %>
+                  <div class="row">
+                    <div class="col-sm-12 alert alert-success" id="success-message">
+                      <%= messages.success %>
+                    </div>
+                  </div>
+                  <% } %>
+                    <div class="row">
+                      <div></div>
+                      <div class="col-sm-6">
+
+                        <button class="btn btn-primary"><a href="#editProfile" class="edit" data-toggle="modal"
+                            data-toggle="tooltip" title="AddImage"
+                            style="text-decoration: none; color: black;">Edit</a></button>
+                      </div>
+                      <div class="col-sm-6">
+                        <button class="btn btn-primary"><a href="#changePassword"
+                            style="text-decoration: none; color: black;" data-toggle="modal"
+                            data-toggle="tooltip">Change password</a></button>
+                      </div>
+                    </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9 " id="orders" style="display: none;">
+        <div class="row" style="text-align: center;">
+          <h1 >Orders</h1>
+        </div>
+        <% if(currentUser.orders && currentUser.orders.length>0){ %>
+          <table class="table table-bordered text-center">
+            <thead class="bg-secondary text-dark">
+              <tr>
+                <th>order #</th>
+                <th>Billing Name</th>
+                <th>Order Total</th>
+                <th>Date</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th>Details</th>
+
+              </tr>
+            </thead>
+            <tbody class="align-middle">
+              <% for(let i=0;i< currentUser.orders.length;i++){ %>
+                <tr>
+                  <td class="align-middle">
+                    <%= currentUser.orders[i]._id %>
+                  </td>
+                  <td class="align-middle">
+                    <%= currentUser.orders[i].user.fullName %>
+                  </td>
+                  <td class="align-middle">
+                    <%= currentUser.orders[i].totalAmount %>
+                  </td>
+                  <td class="align-middle">
+                    <% const rawDate=new Date(currentUser.orders[i].orderDate); %>
+                      <% const year=rawDate.getFullYear(); %>
+                        <% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+                          <% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+                            <%= `${day}-${month}-${year}` %>
+                  </td>
+
+                  <td class="align-middle">
+                    <%= currentUser.orders[i].paymentMethod %>
+                  </td>
+                  <td class="align-middle">
+                    <%= currentUser.orders[i].status %>
+                  </td>
+
+                  <td>
+                    <% const orderCreationDate=new Date(currentUser.orders[i].orderDate); %>
+                      <% const currentDate=new Date(); %>
+                        <% const hoursDifference=Math.abs(currentDate - orderCreationDate) / 36e5; %>
+                          <% const daysDifference=Math.abs(currentDate - orderCreationDate) / 8.64e7; %>
+                          <% if ((currentUser.orders[i].status==='Failed')||(currentUser.orders[i].status==='cancelled')||(currentUser.orders[i].status==='return')) { %>
+                            No Action
+                            <% } else if (hoursDifference <=24){ %>
+                              <button class="btn btn-primary" data-toggle="modal"
+                                data-target="#statusModal<%= currentUser.orders[i]._id %>">
+                                Cancel
+                              </button>
+                              <% }  else if (daysDifference <=14){ %>
+                                <button class="btn btn-primary" data-toggle="modal"
+                                  data-target="#statusModal<%= currentUser.orders[i]._id %>">
+                                  Return
+                                </button>
+                                <% }  else{ %>
+
+                                14 days over
+
+                                <%} %>
+                                  <!-- Status Change Modal -->
+                                  <div class="modal fade" id="statusModal<%= currentUser.orders[i]._id %>" tabindex="-1"
+                                    role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                      <div class="modal-content">
+                                        <div class="modal-header text-center">
+                                          <h5 class="modal-title" id="statusModalLabel" style="color: black;">Actions
+                                          </h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <form action="/profile/order-action/<%= currentUser.orders[i]._id %>"
+                                          method="post">
+                                          <div class="modal-body">
+                                            <!-- Status change form -->
+
+                                            <div class="form-group">
+
+                                              <select class="form-control" id="newStatus" name="action">
+                                                <% if (hoursDifference <=24) { %>
+                                                  <option value="cancel"> Cancel Order</option>
+                                                  <% } else if (daysDifference <=14) { %>
+                                                      <option value="return">Return</option>
+                                                      <% } %>
+                                              </select>
+                                            </div>
+
+
+
+
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                                style="color: black;">Close</button>
+                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                          </div>
+                                        </form>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                  </td>
+                  <td>
+                    <button class="btn" data-toggle="modal" data-target="#detail<%= currentUser.orders[i]._id %>">
+                      View
+                    </button>
+                    <!-- view details -->
+                    <div class="modal fade" style="width: 100%;" id="detail<%= currentUser.orders[i]._id %>"
+                      tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog" >
+                        <div class="modal-content">
+                          <div class="modal-header text-center">
+                            <h5 class="modal-title" id="statusModalLabel" style="color: black;">
+                             OrderId - <%= currentUser.orders[i]._id %>
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <div class="modal-body">
+                            <table>
+                              <tr>
+                                <td>
+                                  Order Date
+                                </td>
+                                <td>
+                                  <%= `${day}-${month}-${year}` %>
+                                </td>
+                              </tr>
+
+
+
+
+                              <% for(let j=0; j< currentUser.orders[i].items.length;j++){ %>
+                                <tr>
+                                  <td>
+                                    Item-<%= j+1 %>
+                                  </td>
+                                  <td>
+
+                                    <%= currentUser.orders[i].items[j].product.name %> ,
+
+                                    color -   <%= currentUser.orders[i].items[j].color %> ,
+
+                                     size -    <%= currentUser.orders[i].items[j].size %>,
+                                     <img style="width: 100px; height: 100px;" src="<%= currentUser.orders[i].items[j].product.images[0] %>" alt="">
+                                  </td>
+
+                                </tr>
+                                <% } %>
+
+                                  <tr>
+                                    <td>Address</td>
+                                    <td>
+                                      <%= currentUser.orders[i].address %>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Total Amount</td>
+                                    <td>
+                                      <%= currentUser.orders[i].totalAmount %>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <td>Payment Method</td>
+                                    <td>
+                                      <%= currentUser.orders[i].paymentMethod %>
+                                    </td>
+                                  </tr> 
+                                  <tr>
+                                    <td>Status</td>
+                                    <td>
+                                      <%= currentUser.orders[i].status %>
+                                    </td>
+                                  </tr>                               </table>
+
+
+
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                style="color: black;">Close</button>
+                              
+                            </div>
+                          </div>
+
+
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                </tr>
+                <% } %>
+            </tbody>
+          </table>
+
+          <% }else{ %>
+            <div class="card-body">
+              <h4>No order data found</h4>
+            </div>
+            <% } %>
+
+      </div>
+
+      <div class="col-md-9" id="addresses" style="display: none;">
+        <div class="row" style="text-align: center;">
+          <h1 >Addresses</h1>
+        </div>
+        <% if (currentUser.addresses && currentUser.addresses.length> 0) { %>
+          <% for(let i=0;i< currentUser.addresses.length; i++){ %>
+            <div class="mb-4">
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" name="payment" id="directcheck">
+                    <label for="">Address <%= i+1 %></label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col-md-6 form-group">
+                  <label>First Name</label>
+                  <input class="form-control" type="text" value="<%= currentUser.fullName %>">
+                </div>
+
+                <div class="col-md-6 form-group">
+                  <label>E-mail</label>
+                  <input class="form-control" type="text" value="<%= currentUser.email %>">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>Mobile No</label>
+                  <input class="form-control" type="text" value=<%=currentUser.mobileNo %>>
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>House No </label>
+                  <input class="form-control" type="text" value="<%= currentUser.addresses[i].houseNo %>">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>Street</label>
+                  <input class="form-control" type="text" value="<%= currentUser.addresses[i].street %>">
+                </div>
+
+                <div class="col-md-6 form-group">
+                  <label>City</label>
+                  <input class="form-control" type="text" value="<%= currentUser.addresses[i].city %>">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>State</label>
+                  <input class="form-control" type="text" value="<%= currentUser.addresses[i].state %>">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>ZIP Code</label>
+                  <input class="form-control" type="text" value="<%= currentUser.addresses[i].postalcode %>">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>Country</label>
+                  <input class="form-control" type="text" value="  <%= currentUser.addresses[i].country %>">
+
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <button class="btn btn-primary"><a style="text-decoration: none; color: black;"
+                      href="/profile/editAddress/<%= i %>">Edit</a></button>
+                </div>
+              </div>
+
+            </div>
+            <% }} %>
+              <button class="btn btn-outline-primary"><a href="#addAddress" class="edit" data-toggle="modal"
+                  data-toggle="tooltip" title="AddImage" style="text-decoration: none; color: black;">Add
+                  New Address</a></button>
+
+      </div>
+      <div class="col-md-9 " id="wallets" style="display: none;">
+        <div class="row" style="text-align: center;">
+          <h1 >Wallet Data</h1>
+        </div>
+        <% if(currentUser.wallets && currentUser.wallets.length>0){ %>
+          <div class="row">
+            <div class="col-md-6">Wallet Balance</div>
+            <div class="col-md-6"><%= currentUser.walletTotal %></div>
+
+          </div><br><br>
+          <table class="table table-bordered text-center">
+            <thead class="bg-secondary text-dark">
+              <tr>
+                <th>Type</th>
+                <th>Order Id</th>
+                <th>Date</th>
+                <th>Amount</th>
+                
+
+              </tr>
+            </thead>
+            <tbody class="align-middle">
+              <% for(let i=(currentUser.wallets.length)-1;i>=0;i--){ %>
+                <tr>
+                  <td class="align-middle">
+                    <%= currentUser.wallets[i].transactionType %>
+                  </td>
+                  <td class="align-middle">
+                    <%= currentUser.wallets[i].orderId %>
+                  </td>
+                  <td class="align-middle">
+                    <% const rawDate=new Date(currentUser.wallets[i].date); %>
+                    <% const year=rawDate.getFullYear(); %>
+                      <% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+                        <% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+                          <%= `${day}-${month}-${year}` %>
+                  </td>
+                  <td class="align-middle">
+                    <%= currentUser.wallets[i].amount %>
+                  </td>
+                  
+
+                 
+                 
+
+                 
+                 
+
+                </tr>
+                <% } %>
+            </tbody>
+          </table>
+
+          <% }else{ %>
+            <div class="row">
+              <div class="col-md-6">Wallet Balance</div>
+              <div class="col-md-6">0</div>
+  
+            </div>
+            <% } %>
+
+      </div>
+    </div>
+
+    <!-- <div class="col-md-8" id="addresses" style="display: none;">
+                  <% if (currentUser.addresses && currentUser.addresses.length > 0) { %>
+                    <% for(let i=0;i< currentUser.addresses.length; i++){ %>
+                      <div class="col-sm-12">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">House No</h6>
+                            </div>
+                            <div class="col-sm-9 text-dark">
+                            <%= currentUser.addresses[i].houseNo %>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Street</h6>
+                            </div>
+                            <div class="col-sm-9 text-dark">
+                              <%= currentUser.addresses[i].street %>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">City</h6>
+                            </div>
+                            <div class="col-sm-9 text-dark">
+                              <%= currentUser.addresses[i].city %>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">State</h6>
+                            </div>
+                            <div class="col-sm-9 text-dark">
+                              <%= currentUser.addresses[i].state %>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Postal Code</h6>
+                            </div>
+                            <div class="col-sm-9 text-dark">
+                              <%= currentUser.addresses[i].postalcode %>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Country</h6>
+                            </div>
+                            <div class="col-sm-9 text-dark">
+                              <%= currentUser.addresses[i].country %>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              <button class="btn btn-primary"><a style="text-decoration: none; color: black;" href="/profile/editAddress/<%= i %>">Edit</a></button>
+                            </div>
+                          </div>
+                        </div>
+                        <% } %>
+                        <% }else{ %>
+                          <div class="col-md-8">
+                            <h4>Not yet added address data</h4>
+                          </div>
+                      <% } %>
+                      <button class="btn btn-outline-primary"><a href="#addAddress" class="edit" data-toggle="modal" data-toggle="tooltip" title="AddImage" style="text-decoration: none; color: black;" >Add New Address</a></button>
+                    
+                      </div> -->
+  </div>
+
+
+
+
+</div>
+<div id="addAddress" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/profile/addAddress" method="post" autocomplete="off">
+        <div class="modal-header">
+          <h6 class="modal-title">Add Address</h6>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="house-no">House No</label>
+            <input type="text" class="form-control" name="houseNo" required>
+
+          </div>
+          <div class="form-group">
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street" class="form-control" required><br>
+          </div>
+
+          <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" class="form-control" required><br>
+          </div>
+
+          <div class="form-group">
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" class="form-control" required><br>
+          </div>
+
+          <div class="form-group">
+            <label for="postalCode">Postal Code:</label>
+            <input type="text" id="postalCode" name="postalcode" class="form-control" required><br>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" class="form-control" required><br>
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+          <button type="submit" class="btn btn-info"> save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="addProfileImage" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/profile/addImage" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h6 class="modal-title">Select the image to add</h6>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+
+            <input type="file" id="images" name="image" accept="image/*" multiple class="form-control" required>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+          <button type="submit" class="btn btn-info"> save</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<div id="editProfile" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/profile/edit" method="post">
+        <!-- <input type="hidden" name="_method" value="put"> -->
+        <div class="modal-header">
+          <h6 class="modal-title">Profile Data</h6>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" name="fullName" value="<%= currentUser.fullName %>" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="text" class="form-control" name="email" value="<%= currentUser.email %>" required>
+          </div>
+          <div class="form-group">
+            <label>Mobile no</label>
+            <input type="text" class="form-control" name="mobileNo" value="<%= currentUser.mobileNo %>" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+          <button type="submit" class="btn btn-info"> save</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<div id="changePassword" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/profile/changePassword" method="post">
+
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Current password</label>
+            <input type="password" class="form-control" name="currentPassword" required>
+          </div>
+          <div class="form-group">
+            <label>New password</label>
+            <input type="password" class="form-control" name="newPassword" required>
+          </div>
+          <div class="form-group">
+            <label>Confirm password</label>
+            <input type="password" class="form-control" name="confirmPassword" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+          <button type="submit" class="btn btn-info"> save</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+</div>
+</div>
+</div>
+
+<script>
+  console.log('hiii')
+  // Disable the browser's back button
+  history.pushState(null, null, location.href);
+  window.addEventListener('popstate', function () {
+    history.pushState(null, null, location.href);
+  });
+
+  // Select the buttons using their updated IDs
+  const myProfileBtn = document.getElementById('my-profile-btn');
+  const ordersBtn = document.getElementById('orders-btn');
+  const walletsBtn = document.getElementById('wallets-btn');
+  const addressesBtn = document.getElementById('addresses-btn');
+  const myProfile = document.getElementById('my-profile');
+  const orders = document.getElementById('orders');
+  const wallets = document.getElementById('wallets');
+  const addresses = document.getElementById('addresses');
+  const editAddressBtns = document.querySelectorAll('[id^="editAddress_"]')
+  const editAddressBtnSave = document.getElementsByClassName('editAddressBtn')
+
+  myProfileBtn.addEventListener('click', () => {
+    myProfile.style.display = 'block';
+    orders.style.display = 'none';
+    addresses.style.display = 'none';
+    wallets.style.display='none'
+  });
+
+  ordersBtn.addEventListener('click', () => {
+    myProfile.style.display = 'none';
+    orders.style.display = 'block';
+    addresses.style.display = 'none';
+    wallets.style.display='none'
+  });
+
+  addressesBtn.addEventListener('click', () => {
+    myProfile.style.display = 'none';
+    orders.style.display = 'none';
+    addresses.style.display = 'block';
+    wallets.style.display='none'
+  });
+  walletsBtn.addEventListener('click', () => {
+    myProfile.style.display = 'none';
+    orders.style.display = 'none';
+    addresses.style.display = 'none';
+    wallets.style.display='block'
+  });
+  editAddressBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      let addressIndex = btn.getAttribute('details')
+      editAddressBtnSave.setAttribute('addressIndex', addressIndex);
+      $('#editAddressModal').modal('show');
+    })
+  })
+
+
+  // Add this code at the end of your HTML file or in a separate JavaScript file
+
+  // Function to hide the success message
+  function hideSuccessMessage() {
+    const successMessage = document.getElementById('success-message');
+    if (successMessage) {
+      successMessage.style.display = 'none';
+    }
+  }
+
+  // Set a timeout to hide the success message after 5 seconds
+  const successMessageTimeout = 2000; // 2000 milliseconds (2 seconds)
+  setTimeout(hideSuccessMessage, successMessageTimeout);
+
+
+</script>

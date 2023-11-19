@@ -11,6 +11,10 @@ const productSchema= new mongoose.Schema({
         type: Number,
         required: true,    
       },
+      initialPrice:Number,
+      offer:{type:mongoose.Schema.Types.ObjectId,
+        ref:'Offer'
+      },
       category:{
         // type:String,
         // required:true
@@ -57,7 +61,7 @@ const productSchema= new mongoose.Schema({
 )
 
 productSchema.pre(/^find/,  async function (next) {
-  this.populate('variants').populate('category').populate('subCategory')
+  this.populate('variants').populate('category').populate('subCategory').populate('offer')
   next();
 });
 module.exports=mongoose.model("Product",productSchema)

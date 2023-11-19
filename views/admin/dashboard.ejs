@@ -1,1 +1,196 @@
-<h1>dashboard</h1>
+
+<style>
+    .initial-avatar {
+      width: 150px;
+      height: 150px;
+      background-color: #f0a39c;
+      /* Change the background color as needed */
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-size: 24px;
+    }
+  </style>
+  
+  <!-- ========================= Main ==================== -->
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                <a  class="nav-item nav-link"><form action="/admin/logout" method="post"><button class=" btn-primary" type="submit">Logout</button></form></a>
+                <!-- <div class="search">
+                    <label>
+                        <input type="text" placeholder="Search here">
+                        <ion-icon name="search-outline"></ion-icon>
+                    </label>
+                </div>
+
+                <div class="user">
+                    <img src="/admin-assets/imgs/customer01.jpg" alt="">
+                </div> -->
+            </div>
+
+            <!-- ======================= Cards ================== -->
+            <div class="cardBox">
+                <a href="/admin/users" style="text-decoration: none;">
+                <div class="card">
+                    
+                    <div>
+                        <div class="numbers"><%= totalCustomers %></div>
+                        <div >Total Customers</div>
+                    </div>
+
+                    <div class="iconBx">
+                        &nbsp;<i class="fas fa-users"></i>
+                    </div>
+              
+                </div>
+            </a>
+            <a href="/admin/orders" style="text-decoration: none;">
+            
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= orderCount %></div>
+                        <div>Sales</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="cart-outline"></ion-icon>
+                    </div>
+                </div>
+            </a>
+            <a href="/admin/categories" style="text-decoration: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= categoryCount %></div>
+                        <div>No of Categories</div>
+                    </div>
+
+                    <div class="iconBx">
+                        &nbsp; <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </a>
+            <a href="/admin/subCategories" style="text-decoration: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= subCategoryCount %></div>
+                        <div>No of Sub-categories</div>
+                    </div>
+
+                    <div class="iconBx">
+                        &nbsp; <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </a>
+
+                
+            </div>
+            <!-- Download -->
+            <!-- <div class="row my-5">
+                <div class="col-md-12">
+                    <h2>Do you want to download the sales report?</h2>
+                </div>
+                <div class="col-md-6">
+                    <a href="{% url 'customadminapp:download_invoice_pdf' %}" class="btn btn-primary btn-block">Download PDF</a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{% url 'customadminapp:download_invoice_excel' %}" class="btn btn-success btn-block">Download Excel</a>
+                </div>
+            </div> -->
+
+            <!-- ================ Add Charts JS ================= -->
+            <div class="chartsBx">
+                
+                <div class="chart"> <canvas id="chart-1"></canvas> </div>
+                <div class="chart"> <canvas id="chart-2"></canvas> </div>
+            </div>
+
+            <!-- ================ Order Details List ================= -->
+            <div class="details" style="grid-template-columns: 2fr 1fr;">
+                <div class="recentOrders" >
+                    <div class="cardHeader">
+                        <h2>Recent Orders</h2>
+                        <!-- <a href="#" class="btn">View All</a> -->
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Name</td>
+                                <td>Price</td>
+                                <td>OrderDate</td>
+                                <td>Payment</td>
+                                <td>Status</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i=0;i<=8;i++){
+                                if(i<=totalOrders.length){ %>
+                              <tr>
+                                <td><%= totalOrders[i].user.fullName %></td>
+                                <td><%= totalOrders[i].totalAmount %></td>
+                                <td><% const rawDate=new Date(totalOrders[i].orderDate); %>
+                                    <% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+                                        <% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+                                            <% const year=rawDate.getFullYear(); %>
+
+                                                <%= `${day}-${month}-${year}` %></td>
+                                <td><%= totalOrders[i].paymentMethod %></td>
+                                <td><span
+                                    class="status delivered"
+                                  ><%= totalOrders[i].status %></span></td>
+                              </tr>
+            
+                         <% }} %>
+                          </tbody>
+                    </table>
+                </div>
+
+                <!-- ================= New Customers ================ -->
+                <div class="recentCustomers">
+                    <div class="cardHeader">
+                        <h2>Recent Customers</h2>
+                    </div>
+
+                    <table>
+                        <% for (let i = 0; i < (customersList.length > 5 ? 5 : customersList.length); i++) { %>
+                            
+                                <tr>
+                                    <% if(customersList[i].profileImage){ %>
+                                        <td width="60px">
+                                            <div class="imgBx"><img src="<%= customersList[i].profileImage %>" alt=""></div>
+                                        </td>
+
+                                  <%  } else { %>
+                                    <td width="60px">
+                                        <div class="imgBx initial-avatar">
+                                            <span >
+                                              <%= customersList[i].fullName.charAt(0).toUpperCase() %>
+                                            </span>
+                                          </div>
+                                    </td>
+
+                                <% } %>
+                                    
+                                    <td>
+                                        <h4><%= customersList[i].fullName %><br> <span></span></h4>
+                                    </td>
+                                </tr>
+
+                          <%  
+                        } %>
+                       
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+
+
+   

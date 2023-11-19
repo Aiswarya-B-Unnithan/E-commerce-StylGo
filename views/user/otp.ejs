@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>StyleGo</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body class="text-center" style="height: 100vh; background-color: #FFFFFF;">
+	<section class="wrapper" style="padding-top: 10%;" >
+		
+		<div class="container ">
+			<div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
+				
+				<form class="rounded bg-white shadow p-5" method="post" action="/otp">
+					<h3 class="text-dark fw-bolder fs-4 mb-2">Two Step Verification</h3>
+                    <% if (typeof error!=='undefined'){ %>
+					<div class="fw-normal mb-4 text-danger">
+						<%= error.message %>
+					</div> 
+                    <% } else{ %>
+                        <div class="fw-normal text-muted mb-4">
+                            Enter the 6 digit verification code we sent to your email
+                        </div>
+                    <% } %>
+
+					<div class="otp_input text-start mb-2">
+                        <label for="digit">Type your 6 digit security code</label>
+						<div class="d-flex align-items-center justify-content-between mt-2">
+                            <input type="text" class="form-control" name="num1" maxlength="1">
+                            <input type="text" class="form-control" name="num2" maxlength="1">
+                            <input type="text" class="form-control" name="num3" maxlength="1">
+                            <input type="text" class="form-control" name="num4" maxlength="1">
+                            <input type="text" class="form-control" name="num5" maxlength="1">
+                            <input type="text" class="form-control" name="num6" maxlength="1">
+                        </div> 
+					</div>  
+
+					<button type="submit" class="btn btn-primary my-4">Submit</button> 
+                </form>
+
+                <form class="rounded bg-white shadow p-5" action="/resend" method="post" style="margin-top: 0;">
+						    Didn’t get the OTP ? <a href="#" class="text-primary fw-bold text-decoration-none"><button class="btn btn-primary my-4" type="submit">Resend</button></a>
+                </form>
+				
+			</div>
+		</div>
+	</section>
+    <script>
+        history.replaceState({},document.title,'/')//for not going back to this page
+    </script>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>
+    

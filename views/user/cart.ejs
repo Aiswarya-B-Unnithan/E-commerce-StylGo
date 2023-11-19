@@ -1,0 +1,447 @@
+<section>
+    <!-- Cart Start -->
+    <% if(cartItems && cartItems!=='undefined' ){ %>
+
+
+        <div class="container-fluid pt-5">
+            <div class="row px-xl-5">
+                <div class="col-lg-8 table-responsive mb-5">
+                    <div id="messageContainer"></div>
+                    <div id="cartTableContainer">
+                        <table class="table table-bordered text-center mb-0">
+                            <thead class="bg-secondary text-dark">
+                                <tr>
+                                    <th>Products</th>
+                                    <th>Price</th>
+                                    <th>Color</th>
+                                    <th>Size</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody class="align-middle">
+                                <% for(let i=0;i< cartItems.length ;i++){ %>
+                                    <tr
+                                        id="row_<%= cartItems[i].product._id %>_<%= cartItems[i].color%>_<%= cartItems[i].size %>">
+                                        <td class="align-middle"><img src="<%= cartItems[i].product.images[0] %>" alt=""
+                                                style="width: 50px;">
+                                            <%= cartItems[i].product.name %>
+                                        </td>
+                                        <td class="align-middle">
+                                            <%= cartItems[i].product.price %>
+                                        </td>
+                                        <td class="align-middle">
+                                            <%= cartItems[i].color%>
+                                        </td>
+                                        <td class="align-middle">
+                                            <%= cartItems[i].size%>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="input-group quantity mx-auto" style="width: 100px;">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-sm btn-primary btn-minus"
+                                                        id="quantityDecrementBtn_<%= cartItems[i].color%>_<%= cartItems[i].size%>"
+                                                        pdt-details="<%= cartItems[i].product._id %>_<%= cartItems[i].color%>_<%= cartItems[i].size%>">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="text"
+                                                    class="form-control form-control-sm bg-secondary text-center"
+                                                    value="<%= cartItems[i].quantity %>"
+                                                    id="quantity_<%= cartItems[i].product._id %>_<%= cartItems[i].color%>_<%= cartItems[i].size%>">
+                                                <input type="text" style="display: none;"
+                                                    value="<%= cartItems[i].stock %>"
+                                                    id="stock_<%= cartItems[i].color%>_<%= cartItems[i].size%>">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-sm btn-primary btn-plus"
+                                                        id="quantityIncrementBtn_<%= cartItems[i].color%>_<%= cartItems[i].size%>"
+                                                        pdt-details="<%= cartItems[i].product._id %>_<%= cartItems[i].color%>_<%= cartItems[i].size%>">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="align-middle"
+                                            id="total_<%= cartItems[i].product._id %>_<%= cartItems[i].color%>_<%= cartItems[i].size%>">
+                                            <%= (cartItems[i].product.price * cartItems[i].quantity).toFixed(2) %>
+                                        </td>
+                                        <td class="align-middle">
+                                            <button class="btn btn-sm btn-primary"
+                                                id="removeItemBtn_<%= cartItems[i].color%>_<%= cartItems[i].size%>"
+                                                pdt-details="<%= cartItems[i].product._id %>_<%= cartItems[i].color%>_<%= cartItems[i].size%>"><i
+                                                    class="fa fa-times"></i></button>
+                                        </td>
+                                    </tr>
+
+                                    <% } %>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    
+                    <div class="card border-secondary mb-5">
+                        <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                        </div>
+                        <div class="card-body">
+                            <% if(userCart.couponApplied!==undefined){ %>
+                            <div class="d-flex justify-content-between mb-3 pt-1">
+                                <h6 class="font-weight-medium">Subtotal</h6>
+                                <h6 class="font-weight-medium" id="sub-total">
+                                    <%= userCart.totalPrice + userCart.couponAmount %>
+                                </h6>
+                            </div>
+                            <% } else { %>
+                                <div class="d-flex justify-content-between mb-3 pt-1">
+                                    <h6 class="font-weight-medium">Subtotal</h6>
+                                    <h6 class="font-weight-medium" id="sub-total">
+                                        <%= userCart.totalPrice %>
+                                    </h6>
+                                </div>
+                                <% } %>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="font-weight-medium">Tax</h6>
+                                <h6 class="font-weight-medium" id="tax-amount">
+                                    <%= ( (6/100)* userCart.totalPrice).toFixed(2) %>
+                                </h6>
+                            </div>
+                        </div>
+                        <% if(userCart.couponApplied!==undefined){ %>
+                            <div class="d-flex justify-content-between ">
+                                <h6 class="font-weight-medium">Discount Applied</h6>
+                                <h6 class="font-weight-medium" id="tax-amount">
+                                    <%= - userCart.couponAmount %>
+                                </h6>
+                            </div>
+
+                        <% } %>
+                        <div class="card-footer border-secondary bg-transparent">
+                            <div class="d-flex justify-content-between mt-2">
+                                <h5 class="font-weight-bold">Total</h5>
+                                <h5 class="font-weight-bold" id="cart-total">
+                                    <%= userCart.totalPrice + ((6/100)* userCart.totalPrice) %>
+                                </h5>
+                            </div>
+                            <button class="btn btn-block btn-primary my-3 py-3"><a href="/checkout" style="text-decoration: none; color: black;">Proceed To Checkout</a></button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal HTML -->
+                <!-- <div id="outOfStockModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Product Out of Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Sorry, the selected product is out of stock.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+                <div class="modal fade" id="customMessageModal" tabindex="-1" aria-labelledby="customMessageModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="customMessageModalLabel"> Message</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal"
+                                    aria-label="Close">close</button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="customMessageText"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    id="customMessageCloseButton">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this item?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="confirmDelete">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('script loaded')
+                const quantityIncrementBtns = document.querySelectorAll('[id^="quantityIncrementBtn_"]');
+                const quantityDecrementBtns = document.querySelectorAll('[id^="quantityDecrementBtn_"]');
+                const cartTableContainer = document.getElementById('cartTableContainer');
+                const removeItemBtns = document.querySelectorAll('[id^="removeItemBtn_"]');
+                const subTotal = document.getElementById('sub-total')
+                const cartTotal = document.getElementById('cart-total')
+                const taxAmount = document.getElementById('tax-amount')
+
+                //modal message
+                const customMessageModal = document.getElementById('customMessageModal');
+                const customMessageText = document.getElementById('customMessageText');
+
+
+                quantityIncrementBtns.forEach((btn) => {
+                    btn.addEventListener('click', async (e) => { // Make the event handler asynchronous
+                        e.preventDefault();
+
+                        const pdtDetails = btn.getAttribute('pdt-details');
+
+                        // Make an AJAX request to increment the item
+                        try {
+                            const response = await fetch(`/cart/edit/increment/${pdtDetails}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+
+                            if (response.ok) {
+                                const returnData = await response.json();
+                                const updatedCartItem = returnData.updatedItem
+                                const newCart = returnData.newCart
+                                let quantity = document.getElementById(`quantity_${pdtDetails}`)
+                                let total = document.getElementById(`total_${pdtDetails}`)
+                                let currentTotal = parseFloat(total.textContent);
+
+                                //calculate new value
+                                currentTotal += updatedCartItem.product.price;
+                                let newTax = (6 / 100) * newCart.totalPrice
+
+                                //update
+                                quantity.value = updatedCartItem.quantity
+                                total.textContent = currentTotal.toFixed(2)
+                                subTotal.textContent = newCart.totalPrice
+                                taxAmount.textContent = newTax.toFixed(2)
+                                cartTotal.textContent = (parseFloat(subTotal.textContent) + parseFloat(taxAmount.textContent)).toFixed(2);
+
+                            } else if (response.status === 400) {
+                                // Handle the "Product is out of stock" message
+                                const errorMessage = 'Sorry, the selected product is out of stock.';
+                                showCustomMessage(errorMessage);
+
+                                // // Trigger the modal
+                                // $('#outOfStockModal').modal('show');
+                            } else {
+                                // Handle other errors and display a generic message
+                                const errorMessage = 'Error incrementing item. Please try again.';
+                                showCustomMessage(errorMessage);
+                            }
+                        } catch (error) {
+                            console.error('Fetch error:', error);
+                            // Handle fetch errors and display a message
+                            const errorMessage = 'An error occurred. Please try again later.';
+                            showCustomMessage(errorMessage);
+                        }
+                    });
+                });
+
+                // Function to display a message in the message container
+                // function displayMessage(message, type) {
+                //         const messageContainer = document.getElementById('messageContainer');
+                //         messageContainer.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
+                //     }
+                function showCustomMessage(message) {
+                    customMessageText.textContent = message;
+                    $('#customMessageModal').modal('show'); // Show the modal
+                }
+
+
+                // Add a click event listener to each button
+                quantityDecrementBtns.forEach((btn) => {
+                    btn.addEventListener('click', async (e) => { // Make the event handler asynchronous
+                        console.log('inside delete click')
+                        e.preventDefault();
+
+                        const pdtDetails = btn.getAttribute('pdt-details');
+                        let quantityHolder = document.getElementById(`quantity_${pdtDetails}`)
+                        let quantity = parseInt(quantityHolder.value)
+
+                        //if quantity is one ask confirmation to delete the product from cart
+                        if (quantity === 1) {
+                            showConfirmationModal();
+                            const confirmDeleteButton = document.getElementById('confirmDelete');
+                            confirmDeleteButton.addEventListener('click', () => {
+                                // Hide the confirmation modal
+                                hideConfirmationModal();
+                                // Delete the row
+                                deleteRow(pdtDetails);
+                                deleteItemFromDatabase(pdtDetails)
+                            });
+                        } else {
+                            try {
+                                const response = await fetch(`/cart/edit/decrement/${pdtDetails}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                });
+
+                                if (response.ok) {
+                                    const returnData = await response.json();
+                                    const updatedCartItem = returnData.updatedItem
+                                    const newCart = returnData.newCart
+                                    let quantity = document.getElementById(`quantity_${pdtDetails}`)
+                                    let total = document.getElementById(`total_${pdtDetails}`)
+                                    let currentTotal = parseFloat(total.textContent);
+
+                                    //calculate new value
+                                    currentTotal -= updatedCartItem.product.price;
+                                    let newTax = (6 / 100) * newCart.totalPrice
+
+                                    //update
+                                    quantity.value = updatedCartItem.quantity
+                                    total.textContent = currentTotal.toFixed(2)
+                                    subTotal.textContent = newCart.totalPrice
+                                    taxAmount.textContent = newTax.toFixed(2)
+                                    cartTotal.textContent = (parseFloat(subTotal.textContent) + parseFloat(taxAmount.textContent)).toFixed(2);
+
+                                } else {
+                                    // Handle other errors and display a generic message
+                                    const errorMessage = 'Error decrementing item. Please try again.';
+                                    showCustomMessage(errorMessage);
+                                }
+                            } catch (error) {
+                                console.error('Fetch error:', error);
+                                // Handle fetch errors and display a message
+                                const errorMessage = 'An error occurred. Please try again later.';
+                                showCustomMessage(errorMessage);
+                            }
+                        }
+
+
+                    });
+                });
+
+                //remove item
+                removeItemBtns.forEach((btn) => {
+                    btn.addEventListener('click', async (e) => {
+                        console.log('inside btn click')
+                        e.preventDefault()
+                        const pdtDetails = btn.getAttribute('pdt-details');
+                        console.log('pdt details', pdtDetails)
+                        showConfirmationModal(pdtDetails); // Pass pdtDetails to the modal
+                    })
+                })
+                // Function to handle item deletion
+                async function deleteItemFromDatabase(pdtDetails) {
+                    try {
+                        const response = await fetch(`/cart/deleteItem/${pdtDetails}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        if (response.ok) {
+                            const newCart = await response.json();
+                            if (newCart === null || newCart.items.length === 0) {
+                                // If the cart is now empty, redirect to the home page
+                                window.location.href = '/shop';
+                            } else {
+                                //update data
+                                subTotal.textContent = newCart.totalPrice
+                                let newTax = (6 / 100) * newCart.totalPrice
+                                taxAmount.textContent = newTax.toFixed(2)
+                                cartTotal.textContent = (parseFloat(subTotal.textContent) + parseFloat(taxAmount.textContent)).toFixed(2);
+
+                                // Item deleted successfully
+                                console.log('Item deleted from the database');
+                            }
+                        } else {
+                            // Handle errors and display a generic message
+                            const errorMessage = 'Error deleting item from the database. Please try again.';
+                            showCustomMessage(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        // Handle fetch errors and display a message
+                        const errorMessage = 'An error occurred while deleting item from the database. Please try again later.';
+                        showCustomMessage(errorMessage);
+                    }
+
+                }
+
+                // Add a click event listener to the "Delete" button inside the confirmation modal
+                const confirmDeleteButton = document.getElementById('confirmDelete');
+                confirmDeleteButton.addEventListener('click', () => {
+                    console.log('inside confirm btn')
+                    // Get the pdtDetails from the button's data-pdt-details attribute
+                    const pdtDetails = confirmDeleteButton.getAttribute('data-pdt-details');
+
+                    // Delete the item from the database
+                    deleteItemFromDatabase(pdtDetails);
+
+                    // Hide the confirmation modal
+                    hideConfirmationModal();
+
+                    // Delete the row from the UI
+                    deleteRow(pdtDetails);
+                });
+
+                function deleteRow(pdtDetails) {
+                    // Code to remove the row with pdtDetails
+                    const rowToRemove = document.getElementById(`row_${pdtDetails}`);
+                    if (rowToRemove) {
+                        rowToRemove.remove();
+                    }
+                }
+                function showConfirmationModal(pdtDetails) {
+                    // Set pdtDetails as a data attribute on the confirmDeleteButton
+                    confirmDeleteButton.setAttribute('data-pdt-details', pdtDetails);
+                    $('#confirmationModal').modal('show');
+                }
+
+                // Function to hide the confirmation modal
+                function hideConfirmationModal() {
+                    $('#confirmationModal').modal('hide');
+                }
+
+
+            });
+
+
+        </script>
+        <% } else{ %>
+            <section>
+                <div style="display: flex; justify-content: center; padding-top: 10%;">
+                    <div style="text-align: center;">
+                        <p style="font-size: 30px;">Your cart is empty!</p><br><br>
+                    <button class=" btn btn-primary "><a href="/shop" style="text-decoration: none; color: black;">Continue shopping</a></button>
+                    </div>
+                    
+                </div>
+               
+            </section>
+            <% } %>
+                <!-- Cart End -->
+
+</section>

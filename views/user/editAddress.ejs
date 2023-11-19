@@ -1,0 +1,48 @@
+<section>
+  
+  <form action="/profile/editAddress/<%= addressIndex %>" method="post" >
+   
+    <div style="width: max-content; border: 1px solid gray; width:40%; margin-left:25%; margin-top:5%">
+    <div class="modal-header" style="text-align: center;">
+      <h2 class="text-center">Edit Address</h2>
+
+    </div>
+    <div class="modal-body">
+      <% if (address ) { %>
+        <div class="form-group">
+          <label>House No</label>
+          <input type="text" class="form-control" name="houseNo" required value="<%= address.houseNo %>">
+        </div>
+        <div class="form-group">
+          <label>Street</label>
+          <input type="text" class="form-control" name="street" required value="<%= address.street %>">
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" class="form-control" name="city" required value="<%= address.city %>">
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" class="form-control" name="state" required value="<%= address.state %>">
+        </div>
+        <div class="form-group">
+          <label>Postal code</label>
+          <input type="text" class="form-control" name="postalcode" required value="<%= address.postalcode %>">
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" class="form-control" name="country" required value="<%= address.country %>">
+        </div>
+        <% } %>
+
+
+
+    </div>
+    <div class="modal-footer">
+      <button><a href="/profile" style="text-decoration: none; padding: 10px;">Cancel</a></button>
+      <button type="submit" class="btn btn-info"> save</button>
+    </div>
+  </div>
+  </form>
+
+</section>

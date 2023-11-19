@@ -1,0 +1,228 @@
+<!-- Shop Detail Start -->
+<% if(typeof product!=='undefined' ) { %>
+
+
+
+  <div class="container-fluid py-5">
+    <div class="row px-xl-5">
+      <div class="col-lg-5 pb-5">
+        <div id="product-carousel" class="carousel slide" data-ride="carousel">
+
+
+
+          <div class="carousel-inner border">
+            <div class="carousel-item active">
+              <img class="w-100 h-100" src="<%= product.images[0] %>" alt="Image">
+            </div>
+            <% for(let i=1;i<product.images.length; i++){ %>
+              <div class="carousel-item ">
+                <img class="w-100 h-100" src="<%= product.images[i] %>" alt="Image">
+              </div>
+              <% } %>
+          </div>
+          <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+            <i class="fa fa-2x fa-angle-left text-dark"></i>
+          </a>
+          <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+            <i class="fa fa-2x fa-angle-right text-dark"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-7 pb-5">
+        <h3 class="font-weight-semi-bold">
+          <%= product.name %>
+        </h3>
+
+        <!-- <div class="d-flex mb-3">
+                    <div class="text-primary mr-2">
+                        <small class="fas fa-star"></small>
+                        <small class="fas fa-star"></small>
+                        <small class="fas fa-star"></small>
+                        <small class="fas fa-star-half-alt"></small>
+                        <small class="far fa-star"></small>
+                    </div>
+                     <small class="pt-1">(50 Reviews)</small> 
+                </div> -->
+        <form action="/addToCart" method="post">
+          <input type="text" style="display: none;" name="productDetailPgeUrl" value="/productDetail/<%= product._id %>">
+          <input type="text" style="display: none;" name="productId" value="<%= product._id.toString() %>">
+          <% if(product.offer){ %>
+            <h3 style="color: red;" class="font-weight-semi-bold mb-4"><strike> INR <%= product.initialPrice   %></strike> <%= product.offer.discountPercentage %>% OFF</h3>
+            <h3 class="font-weight-semi-bold mb-4">INR <%= product.price %> </h3>
+          <% } else { %>
+            <h3 class="font-weight-semi-bold mb-4">INR <%= product.price %></h3>
+          <% } %>
+          
+          </h3>
+          <p class="mb-4">
+            <%= product.description %>
+          </p>
+          <div class="d-flex mb-3">
+
+            <div class="d-flex mb-4">
+              <p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
+              <% for (let i=0; i < product.variants.length; i++) { %>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input color-radio" id="color-<%= i %>" name="color"
+                    value="<%= product.variants[i].color %>" data-color="<%= product.variants[i].color %> " <% if
+                    (i===0) { %>checked<% } %>
+                    >
+                    <label class="custom-control-label" for="color-<%= i %>">
+                      <%= product.variants[i].color %>
+                    </label>
+                </div>
+                <% } %>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="d-flex mb-4">
+              <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
+              <% for (let i=0; i < product.variants.length; i++) { %>
+                <% for (let j=0; j < product.variants[i].sizes.length; j++) { %>
+
+                  <div class="custom-control custom-radio custom-control-inline size-option"
+                    data-color="<%= product.variants[i].color %>" <% if (i===0 ) { %>style="display: inline-block;"
+                    <% } else { %>style="display: none;"<% } %>
+                        >
+
+                        <input type="radio" class="custom-control-input size-radio"
+                          id="size-<%= product.variants[i].color + '-' + j %>" name="size"
+                          value="<%= product.variants[i].sizes[j].size %>"
+                          data-size="<%= product.variants[i].sizes[j].size %>" required>
+                        <input type="text" style="display: none;" value="<%= product.variants[i].sizes[j].quantity %>"
+                          id="quantityInput_<%= product.variants[i].color %>_<%= product.variants[i].sizes[j].size %>" name="stock_<%= product.variants[i].color %>_<%= product.variants[i].sizes[j].size %>">
+                        <label class="custom-control-label" for="size-<%= product.variants[i].color + '-' + j %>">
+                          <%= product.variants[i].sizes[j].size %>
+                        </label>
+                  </div>
+                  <% } %>
+                    <% } %>
+            </div>
+
+          </div>
+          <div class="d-flex align-items-center mb-4 pt-2">
+            <div class="input-group quantity mr-3" style="width: 130px;">
+              <div class="input-group-btn">
+                <button class="btn btn-primary btn-minus" id="quantityDecrementBtn">
+                  <i class="fa fa-minus"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control bg-secondary text-center" id="quantityInput" name="quantity"
+                value="1">
+              <div class="input-group-btn">
+                <button class="btn btn-primary btn-plus" id="quantityIncrementBtn">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+
+          </div>
+        </form>
+       
+        <% if(messages.success) { %>
+          <div class="px-xl-5">
+            
+            <button class="btn btn-primary "><a href="/cart" style="color: black; text-decoration: none;">View cart</a></button><br><br>
+            <p  id="success-message"><%= messages.success %></p>
+          </div>
+       <% } %>
+
+      </div>
+      <script>
+        console.log('hiii')
+        const colorRadios = document.querySelectorAll('.color-radio');
+        const sizeRadios = document.querySelectorAll('.size-radio');
+        const sizeOptions = document.querySelectorAll('.size-option');
+        const quantityInput = document.getElementById("quantityInput");
+        const quantityDecrementBtn = document.getElementById('quantityDecrementBtn')
+        const quantityIncrementBtn = document.getElementById('quantityIncrementBtn')
+
+        let stock, selectedColor, selectedSize;
+
+        colorRadios.forEach((radio) => {
+          if (radio.checked) {
+
+            selectedColor = radio.getAttribute('data-color').trim();
+            console.log('selected First color : ', selectedColor)
+          }
+
+          radio.addEventListener('change', () => {
+            quantityInput.value = 1
+            selectedSize = ""
+            selectedColor = radio.getAttribute('data-color').trim();
+            console.log('selected color : ', selectedColor)
+
+            sizeOptions.forEach((sizeOption) => {
+
+              const optionColor = sizeOption.getAttribute('data-color');
+
+              console.log('option color', optionColor)
+              if (optionColor === selectedColor) {
+                // console.log('inside if', selectedColor, optionColor)
+                sizeOption.style.display = 'inline-block';
+
+              } else {
+                // console.log('inside else', selectedColor, optionColor)
+                sizeOption.style.display = 'none';
+              }
+            });
+          });
+        });
+
+        sizeRadios.forEach((sizeRadio) => {
+          sizeRadio.addEventListener('change', () => {
+            quantityInput.value = 1
+            selectedSize = sizeRadio.getAttribute('data-size').trim()
+            console.log('selected size : ', selectedSize)
+            let productStock = document.getElementById(`quantityInput_${selectedColor}_${selectedSize}`)
+            stock = productStock.value
+          })
+        })
+
+        quantityIncrementBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (selectedSize) {
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity < stock) {
+              currentQuantity++;
+              quantityInput.value = currentQuantity;
+            } else {
+              alert("Product is out of stock.");
+            }
+          } else {
+            alert('Please select size')
+          }
+
+        })
+
+        quantityDecrementBtn.addEventListener('click', (e) => {
+          e.preventDefault()
+          if (selectedSize) {
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity > 1) {
+              currentQuantity--;
+              quantityInput.value = currentQuantity;
+            }
+
+          } else {
+            alert('Please select size')
+          }
+
+        })
+//to show flash message
+function hideSuccessMessage() {
+    const successMessage = document.getElementById('success-message');
+    if (successMessage) {
+      successMessage.style.display = 'none';
+    }
+  }
+
+  // Set a timeout to hide the success message after 5 seconds
+  const successMessageTimeout = 1500; // 1500 milliseconds (1.5 seconds)
+  setTimeout(hideSuccessMessage, successMessageTimeout);
+
+
+      </script>
+      <% } %>

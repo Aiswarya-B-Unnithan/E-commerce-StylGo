@@ -1,0 +1,340 @@
+<!-- Checkout Start -->
+<div class="container-fluid pt-5">
+   
+    <div class="row px-xl-5">
+        <div class="col-lg-8">
+            <% if (currentUser.addresses && currentUser.addresses.length> 0) { %>
+                <% for(let i=0;i< currentUser.addresses.length; i++){ %>
+                    <div class="mb-4">
+                        <div class="card-body">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio"  class="custom-control-input" name="payment" id="directcheck">
+                                <label for="">Address <%= i+1 %></label>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-6 form-group">
+                                <label>First Name</label>
+                                <input class="form-control" type="text" value="<%= currentUser.fullName %>">
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>E-mail</label>
+                                <input class="form-control" type="text" value="<%= currentUser.email %>">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Mobile No</label>
+                                <input class="form-control" type="text" value=<%=currentUser.mobileNo %>>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>House No </label>
+                                <input class="form-control" type="text" value="<%= currentUser.addresses[i].houseNo %>">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Street</label>
+                                <input class="form-control" type="text" value="<%= currentUser.addresses[i].street %>">
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>City</label>
+                                <input class="form-control" type="text" value="<%= currentUser.addresses[i].city %>">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>State</label>
+                                <input class="form-control" type="text" value="<%= currentUser.addresses[i].state %>">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>ZIP Code</label>
+                                <input class="form-control" type="text"
+                                    value="<%= currentUser.addresses[i].postalCode %>">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Country</label>
+                                <input class="form-control" type="text"
+                                    value="  <%= currentUser.addresses[i].country %>">
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <% }} %>
+                        <button class="btn btn-outline-primary"><a href="#addAddress" class="edit" data-toggle="modal"
+                                data-toggle="tooltip" title="AddImage" style="text-decoration: none; color: black;">Add
+                                New Address</a></button>
+
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-secondary mb-5">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Order Total</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="font-weight-medium mb-3">Products</h5>
+                    <% for(let i=0;i< cart.items.length; i++){ %>
+                    <div class="d-flex justify-content-between">
+                        <p><%= cart.items[i].product.name %></p>
+                        <p><%= (cart.items[i].product.price) * (cart.items[i].quantity) %></p>
+                    </div>
+                    <% } %>
+                    
+                    <hr class="mt-0">
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-medium">Subtotal</h6>
+                        <h6 class="font-weight-medium"><%= cart.totalPrice %></h6>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Tax</h6>
+                        <h6 class="font-weight-medium"><%= ((6/100)* cart.totalPrice) %></h6>
+                    </div>
+                </div>
+                <div class="card-footer border-secondary bg-transparent">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5 class="font-weight-bold">Total</h5>
+                        <h5 class="font-weight-bold"><%= cart.totalPrice + ((6/100)* cart.totalPrice) %></h5>
+                    </div>
+                </div>
+                <% if(cart.couponApplied ===undefined ){ %>
+
+                
+                <div class="card-footer border-secondary bg-transparent">
+                   
+                    <form action="/checkout/applyCoupon" method="post">
+                        <p>Promotional codes</p>
+                        <div class="d-flex justify-content-between ">
+                            <input type="text" id="couponCodeInput" name="couponCode" required>
+                        <button class="btn btn-outline-primary" type="submit">Apply</button>
+                       </div>
+                       <li class="list-group-item d-flex justify-content-between bg-light">
+                        <div class="coupon-section">
+                          <details>
+                            <summary>Available coupons</summary>
+                            <div class="available-coupons">
+                              <% if (availableCoupons.length > 0) { %>
+                                <% availableCoupons.forEach(coupon => { %>
+                                  <div class="coupon-option">
+                                    <input
+                                      type="radio"
+                                      name="selectedCoupon"
+                                      value="<%= coupon.couponCode %>"
+                                      
+                                      onclick="updateInputValue(this)"
+                                      
+                                    >
+                                    <label><%= coupon.couponCode %> - Get <%= coupon.description %></label>
+                                  </div>
+                                <% }); %>
+                              <% } else { %>
+                                <h6 class="mb-3">No coupon available</h6>
+                              <% } %>
+                            </div>
+                          </details>
+                        </div>
+                      </li>
+                      
+    
+    
+                    </form>
+
+                    <% if(messages.error) { %>
+                        <div class="px-xl-5">
+                          
+                         <br>
+                          <p  id="success-message" style="color: red;"><%= messages.error %></p>
+                        </div>
+                     <% } %>
+                
+            </div>
+            <% } else { %>
+                <div class="card-footer border-secondary bg-transparent">
+                   
+                    <form action="/checkout/removeCoupon" method="post">
+                        <p>Promotional codes</p>
+                        <div class="d-flex justify-content-between ">
+                            <div>Applied coupon code - <%= cart.couponApplied %> </div>
+                            <input type="text" style="display: none;" id="couponCodeInput" name="couponCode" required value="<%=cart.couponApplied %>">
+                        <button class="btn btn-outline-primary" type="submit">Remove Coupon</button>
+                       </div>
+                       
+                    </form>
+
+                    <% if(messages.error) { %>
+                        <div class="px-xl-5">
+                          
+                         <br>
+                          <p  id="success-message" style="color: red;"><%= messages.error %></p>
+                        </div>
+                     <% } %>
+                
+            </div>
+           <% } %>
+            </div>
+            <div class="card border-secondary mb-5">
+                <form action="/checkout/place-order" method="post" onsubmit="return validateForm()">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Payment</h4>
+                </div>
+                <% if(messages.walletError) { %>
+                    <div class="px-xl-5">
+                          
+                        <br>
+                         <p  id="success-message" style="color: red;"><%= messages.walletError %></p>
+                       </div>
+                       <div class="card-body">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="paypal" value="razorpay" required>
+                                <label class="custom-control-label" for="paypal">Razorpay</label>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="banktransfer" value="cash on delivery">
+                                <label class="custom-control-label" for="banktransfer">Cash on delivery</label>
+                            </div>
+                        </div>
+                    </div>
+                    <% }else{ %>
+                <div class="card-body">
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="paymentMethod" id="paypal" value="razorpay" required>
+                            <label class="custom-control-label" for="paypal">Razorpay</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="paymentMethod" id="wallet" value="wallet" >
+                            <label class="custom-control-label" for="wallet">Wallet Payment</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="paymentMethod" id="banktransfer" value="cash on delivery">
+                            <label class="custom-control-label" for="banktransfer">Cash on delivery</label>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Address</h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (currentUser.addresses && currentUser.addresses.length> 0) { %>
+                            <% for(let i=0;i< currentUser.addresses.length; i++){ %>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="address" id="address<%= i %>" details="address<%= i %>" value="address_<%= i %>" required>
+                                <label class="custom-control-label" for="address<%= i %>">Address <%= i+1 %></label>
+                            </div>
+                           
+                        </div>
+                        <% }}else{ %>
+                            <div class="form-group" >
+                                <p id="addressError">Add an address to proceed</p>
+                                <button class="btn btn-outline-primary"><a href="#addAddress" class="edit" data-toggle="modal"
+                                    data-toggle="tooltip" title="AddImage" style="text-decoration: none; color: black;">Add
+                                    New Address</a></button>
+                            </div>
+                            <% } %>
+                            
+                        <input type="text" style="display: none;" id="orderTotalAmount" name="totalAmount" value="<%= cart.totalPrice + ((6/100)* cart.totalPrice) %>">
+                    </div>
+                <div class="card-footer border-secondary bg-transparent">
+                    <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit">Place Order</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div id="addAddress" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/checkout/addAddress" method="post" autocomplete="off"  >
+                <div class="modal-header">
+                    <h6 class="modal-title">Add Address</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="house-no">House No</label>
+                        <input type="text" class="form-control" name="houseNo" required>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Street:</label>
+                        <input type="text" id="street" name="street" class="form-control" required><br>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" class="form-control" required><br>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State:</label>
+                        <input type="text" id="state" name="state" class="form-control" required><br>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postalCode">Postal Code:</label>
+                        <input type="text" id="postalCode" name="postalCode" class="form-control" required><br>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" name="country" class="form-control" required><br>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <button type="submit" class="btn btn-info"> save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+
+</div>
+<!-- Checkout End -->
+<script>
+    function updateInputValue(radioButton) {
+        const couponCodeInput = document.getElementById('couponCodeInput');
+        couponCodeInput.value = radioButton.value;
+    }
+    
+    function validateForm() {
+        // Get the selected address
+        var selectedAddress = document.querySelector('input[name="address"]:checked');
+        const errorDiv=document.getElementById('addressError')
+        // Check if an address is selected
+        if (!selectedAddress) {
+            // Display an alert or message to the user
+            //alert("Please select an address before submitting the form.");
+            errorDiv.style.color='red'
+            // Prevent the form submission
+            return false;
+        }
+
+        // If everything is valid, allow the form submission
+        return true;
+    }
+
+</script>

@@ -9,20 +9,28 @@ const { response } = require('express')
 
 
 //get products
-const getProducts = async (req, res) => {
+const getProducts = async (req, res,next) => {
+try{
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 7;
+  const skip = (page - 1) * perPage;
+  const totalProducts=await Products.find()
+ const data= await Products.find()
+  .populate('category')
+  .populate('subCategory')
+  .populate('variants').skip(skip).limit(perPage)
+  
+    let totalPages = Math.ceil( totalProducts.length / perPage);
+    res.render('admin/products', { layout: './layout/admin-main', productList: data,totalPages,currentPage:page })
+  
 
-    await Products.find()
-      .populate('category')
-      .populate('subCategory')
-      .populate('variants')
-      .then((data) => {
-  
-        res.render('admin/products', { layout: './layout/admin-main', productList: data })
-      })
-      .catch((err) => {
-        console.log('error from products', err)
-      })
-  
+}catch(e){
+next(e)
+}
+
+   
+      
+
   }
   
   //to get add product page
@@ -55,7 +63,18 @@ const postProductAdd = async (req, res) => {
           data:fs.readFileSync(path.join(__dirname+'../../public/uploads/'+file.filename)),
           contentType:file.mimetype
       }))*/
-  
+      const existingProduct = await Products.findOne({ name: { $regex: new RegExp(name, 'i') } });
+      if (existingProduct) {
+        const script = `
+          <script>
+            alert("Product with the name '${existingProduct.name}' already exists.");
+            window.history.back();
+          </script>
+        `;
+
+        res.status(400).send(script);
+        return
+    }
       const uploadedImages = req.files;
   
       const processedImageURLs = [];
@@ -64,14 +83,14 @@ const postProductAdd = async (req, res) => {
       for (const image of uploadedImages) {
         // Use sharp to crop and resize the image
         await sharp(image.path)
-          .resize(200, 200) // Set the desired dimensions
+          .resize(600, 600) // Set the desired dimensions
           .toFile(`public/uploads/cropped_${image.filename}`); // Save the processed image
   
         // Add the processed image's URL to the response
         processedImageURLs.push(`/uploads/cropped_${image.filename}`);
       }
   
-      const newProduct = new Products({ name, price, category, subCategory, images: processedImageURLs, description })
+      const newProduct = new Products({ name, price,initialPrice:price, category, subCategory, images: processedImageURLs, description })
   
       await newProduct.save()
         .then((data) => {
@@ -166,27 +185,45 @@ const postProductAdd = async (req, res) => {
   const postEditProducts = async (req, res) => {
     try {
       console.log('inside edit pdt req.body', req.body)
+      const productId = req.params.id
       const { name, price, categoryName, subCategoryName, isValid } = req.body
       const category = await Categories.findOne({ name: categoryName })
       const subCategory = await SubCategories.findOne({ name: subCategoryName })
+      
+    const pdtToUpdate=await Products.findById(productId)
+    if(pdtToUpdate.name!==name){
+      const existingProduct = await Products.findOne({ name: { $regex: new RegExp(name, 'i') } });
+      if (existingProduct) {
+        const script = `
+          <script>
+            alert("Product with the name '${existingProduct.name}' already exists.");
+            window.history.back();
+          </script>
+        `;
+
+        res.status(400).send(script);
+        return
+    }
+}
+  
       const uploadedImages = req.files;
       const processedImageURLs = []
       for (const image of uploadedImages) {
         // Use sharp to crop and resize the image
         await sharp(image.path)
-          .resize(400, 400) // Set the desired dimensions
+          .resize(600, 600) // Set the desired dimensions
           .toFile(`public/uploads/cropped_${image.filename}`); // Save the processed image
   
         // Add the processed image's URL to the response
         processedImageURLs.push(`/uploads/cropped_${image.filename}`);
       }
   
-      const productId = req.params.id
+      
       const product = await Products.findOne({ _id: productId })
   
       const images = [...product.images, ...processedImageURLs]
   
-      const data = { name, price, images, isValid, category, subCategory }
+      const data = { name, price,initialPrice:price, images, isValid, category, subCategory }
   
       const productUpdated = await Products.updateOne(
         { _id: productId }, data
@@ -282,6 +319,25 @@ const postProductAdd = async (req, res) => {
         next(e)
     }
   }
+  const addProductNameCheck=async(req,res,next)=>{
+    
+    try{
+        console.log('check name pdt ')
+        const pdtName=req.params.name
+        const existingProduct = await Products.findOne({ name: { $regex: new RegExp(pdtName, 'i') } });
+        console.log(existingProduct)
+
+        if(existingProduct){
+            res.json(true)
+        }else{
+            res.json(false)
+        }
+       
+
+    }catch(e){
+        next(e)
+    }
+  }
   module.exports={
     
   getProducts,
@@ -293,5 +349,6 @@ const postProductAdd = async (req, res) => {
   deleteProductImage,
   getProductPage,
   addVariant,
-  addProductCheck
+  addProductCheck,
+  addProductNameCheck
   }

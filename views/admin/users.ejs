@@ -1,0 +1,160 @@
+
+        <!-- ========================= User management ==================== -->
+        <div class="main">
+          
+    <div class="topbar">
+      <div class="toggle">
+          <ion-icon name="menu-outline"></ion-icon>
+      </div>
+      <a  class="nav-item nav-link"><form action="/admin/logout" method="post"><button class=" btn" type="submit">Logout</button></form></a>
+     
+  </div>
+            <h1 style="padding-left: 20%;">User Management</h1>
+            <!--===================search================-->
+            <div class="serach">
+                <form action="/admin/searchUser" method="GET" >
+                    <input class="searchFormInput"
+                      type="text"
+                      name="searchQuery"
+                      placeholder="Search by username or email"
+        
+                    />
+                    <button type="submit" class="clickBtn btnGreen">Search</button>
+                  </form>
+                </div>
+            
+            <!--===================table=============-->
+            <div class="details">
+                
+                <div class="recentOrders">
+                      
+                    <% if(typeof userlist!=='undefined' && userlist.length!==0){ %>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>User Name</td>
+                                <td>Email</td>
+                                <td>Mobile No</td>
+                                <td>Status</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <%  for(let i=0; i < userlist.length; i++){ %>
+                                    <tr>
+                                        <td><%= userlist[i].fullName %></td>
+                                        <td><%= userlist[i].email %></td>
+                                        <td><%= userlist[i].mobileNo %></td>
+                                        <td><% if(userlist[i].isBlocked) { %> blocked
+                                            <% } else { %>
+                                                Active
+                                            <% } %>
+                                        </td>
+                                        <!-- <td><% if(userlist[i].isBlocked) { %>
+                                             <button class="clickBtn btnYellow">
+                                                <a style="text-decoration: none; color: white;" href="/admin/blockUnblockUser/<%= userlist[i]._id %>">Unblock</a>
+                                            </button>
+                                            <% } else { %>
+                                                <button class="clickBtn btnRed">
+                                                    <a style="text-decoration: none; color: white;" href="/admin/blockUnblockUser/<%= userlist[i]._id %>">Block</a>
+                                                </button>
+                                            <% } %>
+                                        </td> -->
+                                        <td>
+                                            <% if (userlist[i].isBlocked) { %>
+                                              <!-- <button class="clickBtn btnYellow"
+                                                onclick="return confirm('Are you sure you want to unblock this user? Press Ok to confirm');">
+                                                <a style="text-decoration: none; color: white;"
+                                                  href="/admin/blockUnblockUser/<%= userlist[i]._id %>">Unblock</a>
+                                              </button> -->
+                                              <button class="clickBtn btnYellow" data-toggle="modal" style="color: white;" data-target="#unblockUserModal" data-user-id="<%= userlist[i]._id %>">
+                                                Unblock
+                                              </button>
+                                            <% } else { %>
+                                              
+                                              <button class="clickBtn editBtn btnRed" data-toggle="modal" style="color: white;" data-target="#blockUserModal" data-user-id="<%= userlist[i]._id %>">
+                                                Block
+                                              </button>
+                                            <% } %>
+                                          </td>
+                                          
+                                    </tr>
+                            <% }  %>    
+
+        
+                        </tbody>
+                    </table>
+                    <% } else { %>
+                        
+                            <h1>
+                                No data found
+                            </h1>
+                    
+                    <% } %>
+                    
+                </div>
+                
+            </div>
+        </div>
+        <!-- Deletion Confirmation Modal -->
+<div class="modal fade" id="blockUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="deleteCategoryModalLabel">Block user confirmation</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to block this user?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <a id="confirmBlockUser" style="text-decoration: none; color:black;" href="#">Block</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Deletion Confirmation Modal -->
+<div class="modal fade" id="unblockUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="deleteCategoryModalLabel">Unblock user confirmation</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to block this user?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <a id="confirmUnblockUser" style="text-decoration: none; color:black;" href="#">Unblock</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Capture the category ID when the user confirms the deletion
+    $('#blockUserModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var userID = button.data('user-id'); // Assuming you have a data-category-id attribute on the button
+  
+      // Update the Delete link in the modal to include the category ID
+      $('#confirmBlockUser').attr('href', '/admin/blockUnblockUser/' + userID);
+    });
+    $('#unblockUserModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var userID = button.data('user-id'); // Assuming you have a data-category-id attribute on the button
+  
+      // Update the Delete link in the modal to include the category ID
+      $('#confirmUnblockUser').attr('href', '/admin/blockUnblockUser/' + userID);
+    });
+  </script>
+    
+
+   
