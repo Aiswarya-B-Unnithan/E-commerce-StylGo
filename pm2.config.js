@@ -2,8 +2,8 @@
 module.exports = {
     apps: [
       {
-        name: 'project name',
-        script: 'build/server.js',
+        name: 'stylgo',
+        script: 'server.js',
         env: {
           NODE_ENV: 'production', 
         },
