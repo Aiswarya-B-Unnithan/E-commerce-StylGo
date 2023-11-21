@@ -5,7 +5,9 @@ const connectDB = async () => {
   try {
     //mongodb connection string
     const connection = await mongoose
-      .connect(process.env.MONGODB_URI)
+      .connect(process.env.MONGODB_URI,{
+        dbName:'StylGo'
+      })
       .then(() => {
         console.log(`connected`);
       });

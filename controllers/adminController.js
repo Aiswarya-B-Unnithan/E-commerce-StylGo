@@ -45,7 +45,9 @@ const postLogin = async (req, res) => {
                 //send email
                 try {
                     sendEmail(email, sub, msg)
-                    res.render('admin/otp', { layout: false })
+                    //res.render('admin/otp', { layout: false })
+                    req.session.adminAuthenticated = true
+                    res.redirect('/admin/dashboard')
 
 
                 } catch (error) {
